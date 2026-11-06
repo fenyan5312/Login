@@ -413,8 +413,10 @@ button { cursor: pointer; }
 .button:active { transform: translateY(1px) scale(0.985); }
 .button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-:root[data-theme="light"] .button { background: rgba(255, 255, 255, 0.7); }
-:root[data-theme="light"] .button:hover { background: #fff; }
+/* The light-theme glass only applies to secondary buttons: a primary button
+   keeps its accent fill, otherwise white text lands on a white background. */
+:root[data-theme="light"] .button:not(.primary) { background: rgba(255, 255, 255, 0.7); }
+:root[data-theme="light"] .button:not(.primary):hover { background: #fff; }
 
 .button.primary {
   border-color: transparent;

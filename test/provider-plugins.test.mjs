@@ -297,3 +297,48 @@ test("the third-source merge stays public and leak-free", () => {
     /client[_-]?secret|client[_-]?id|access[_-]?token|refresh[_-]?token|api[_-]?key|password|authorize/i,
   );
 });
+
+test("vendor ids from community auth plugins line up with the local cards", () => {
+  const view = mergeProviderSources({
+    local: LOCAL,
+    magpie: ["anthropic", "openai", "google"],
+    plugins: {
+      available: true,
+      providers: [
+        {
+          id: "anthropic",
+          package: "opencode-anthropic-auth",
+          methods: [{ type: "oauth", label: "Claude Pro/Max", category: "pending", runnable: true }],
+        },
+        {
+          id: "openai",
+          package: "opencode-openai-codex-auth",
+          methods: [
+            { type: "oauth", label: "ChatGPT Plus/Pro (Codex Subscription)", category: "pending", runnable: true },
+          ],
+        },
+        {
+          id: "google",
+          package: "opencode-antigravity-auth",
+          methods: [{ type: "oauth", label: "OAuth with Google (Antigravity)", category: "pending", runnable: true }],
+        },
+      ],
+    },
+  });
+
+  const claude = view.providers.find((provider) => provider.id === "claude");
+  expect(claude.presence).toBe("both");
+  expect(claude.signInProvider).toBe("anthropic");
+  expect(claude.signableMethod).toBe(true);
+
+  const codex = view.providers.find((provider) => provider.id === "codex");
+  expect(codex.signInProvider).toBe("openai");
+  expect(codex.signInMethods).toContain("ChatGPT Plus/Pro (Codex Subscription)");
+
+  const antigravity = view.providers.find((provider) => provider.id === "antigravity");
+  expect(antigravity.signInProvider).toBe("google");
+
+  // No duplicate plugin-only card is invented for a provider an alias matched.
+  expect(view.providers.some((provider) => provider.id === "openai")).toBe(false);
+  expect(view.counts.pluginOnly).toBe(0);
+});
