@@ -1,7 +1,7 @@
 {
   "name": "login",
-  "version": "1.3.0",
-  "description": "Login — proxy exits, isolated-browser sign-ins, account ledger and WorkBuddy credential import in one magpie plugin.",
+  "version": "1.4.0",
+  "description": "私密登录 — proxy exits, isolated-browser sign-ins, account ledger and WorkBuddy credential import in one magpie plugin.",
   "license": "MIT",
   "author": "筱玖could (微信: xiao9-c)",
   "type": "module",
@@ -43,11 +43,11 @@
   "magpie": {
     "icon": "https://raw.githubusercontent.com/fenyan5312/Login/main/assets/icon.svg",
     "page": {
-      "title": "Login",
+      "title": "私密登录",
       "titles": {
-        "zh": "Login",
-        "zh-TW": "Login",
-        "ja": "Login"
+        "zh": "私密登录",
+        "zh-TW": "私密登录",
+        "ja": "私密登录"
       },
       "file": "page/index.html",
       "icon": "assets/icon.svg",

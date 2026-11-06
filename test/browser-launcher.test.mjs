@@ -218,6 +218,48 @@ test("openSignInBrowser carries the proxy and geoip through", async () => {
   });
   expect(calls.launchOptions.proxy).toEqual({ server: "http://p:1" });
   expect(calls.launchOptions.geoip).toBe(true);
+  // The browser's timezone/locale/geolocation and WebRTC address follow the
+  // proxy exit, and WebRTC is off outright.
+  expect(calls.launchOptions.block_webrtc).toBe(true);
+  expect(calls.launchOptions.firefox_user_prefs).toMatchObject({
+    "network.proxy.socks_remote_dns": true,
+    "network.proxy.failover_direct": false,
+    "network.trr.mode": 5,
+    "network.dns.disablePrefetch": true,
+    "network.prefetch-next": false,
+    "network.predictor.enabled": false,
+    "media.peerconnection.ice.no_host": true,
+  });
+});
+
+test("leak protections are on even for a direct sign-in", async () => {
+  const dir = await tempDir();
+  const calls = {};
+  const camoufox = {
+    async launchOptions(options) {
+      calls.launchOptions = options;
+      return {};
+    },
+    async NewBrowser() {
+      return { pages: () => [{ goto: async () => {} }], close: async () => {} };
+    },
+  };
+  await openSignInBrowser({
+    executablePath: join(dir, "camoufox.exe"),
+    url: "https://x/signin",
+    profileDir: join(dir, "profile"),
+    identity: {},
+    proxy: null,
+    deps: {
+      checkExecutable: async () => true,
+      loadCamoufox: async () => camoufox,
+      loadPlaywright: async () => ({ firefox: {} }),
+    },
+  });
+  expect("proxy" in calls.launchOptions).toBe(false);
+  expect("geoip" in calls.launchOptions).toBe(false);
+  expect(calls.launchOptions.block_webrtc).toBe(true);
+  expect(calls.launchOptions.firefox_user_prefs["network.proxy.socks_remote_dns"]).toBe(true);
 });
 
 test("launchSignInBrowser refuses a missing URL before anything else", async () => {

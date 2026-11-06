@@ -1,10 +1,10 @@
-# Login
+# 私密登录
 
 **One magpie page for proxy exits, isolated-browser sign-ins and your account ledger — plus WorkBuddy credential import, in the same plugin.**
 
 Every account gets its own browser profile, its own pinned fingerprint and the proxy you pick for it. Sign-in pages never open in your everyday browser, and two accounts of the same provider never look like the same machine.
 
-> **Unofficial plugin.** Login is built and maintained at [fenyan5312/Login](https://github.com/fenyan5312/Login). It is **not** a package published by `magpie-community`, and nobody has reviewed it but you. Read the code, open an issue, send a pull request — all three are welcome.
+> **Unofficial plugin.** 私密登录 is built and maintained at [fenyan5312/Login](https://github.com/fenyan5312/Login). It is **not** a package published by `magpie-community`, and nobody has reviewed it but you. Read the code, open an issue, send a pull request — all three are welcome.
 
 > **作者 / Author:** 筱玖could · 微信 / WeChat: `xiao9-c`
 
@@ -14,31 +14,31 @@ Every account gets its own browser profile, its own pinned fingerprint and the p
 
 ## Features
 
-- **Every provider magpie knows, in one list.** Login reads the provider plugins you have installed *and* magpie's own provider list, then merges them with its local registry. Nothing is hidden behind a category you have to guess — the full roster is listed, with the sign-in routes each provider actually exposes.
-- **Pick the way you sign in.** When a provider offers several routes — a login page per site, a team plan, reusing the desktop app's session, pasting a token — you choose, and Login says what kind each route is before you start.
-- **Browser sign-in comes from the provider's auth plugin.** Login offers a browser flow when magpie has the matching plugin installed — for example `opencode-openai-codex-auth` (Codex), `opencode-anthropic-auth` (Claude) or `opencode-antigravity-auth` (Antigravity). Install one with `magpie plugin add <package>`; Login picks it up on the next scan, with no restart of this plugin. Cards without a plugin fall back to credential import.
-- **Paste a credential for any provider.** WorkBuddy keeps its four native methods, and Login adds a fifth: paste a credential JSON, a Cookie header, a curl command, a refresh token or an API key. Every other provider in the list gets the same entry: Login detects a key or token, keeps only the typed fields magpie stores, refuses duplicates, and never logs or forwards the secret. A WorkBuddy refresh token is spent once to prove it; for providers with no safe endpoint to call, Login says so instead of claiming a check it did not run.
+- **Every provider magpie knows, in one list.** 私密登录 reads the provider plugins you have installed *and* magpie's own provider list, then merges them with its local registry. Nothing is hidden behind a category you have to guess — the full roster is listed, with the sign-in routes each provider actually exposes.
+- **Pick the way you sign in.** When a provider offers several routes — a login page per site, a team plan, reusing the desktop app's session, pasting a token — you choose, and 私密登录 says what kind each route is before you start.
+- **Browser sign-in comes from the provider's auth plugin.** 私密登录 offers a browser flow when magpie has the matching plugin installed — for example `opencode-openai-codex-auth` (Codex), `opencode-anthropic-auth` (Claude) or `opencode-antigravity-auth` (Antigravity). Install one with `magpie plugin add <package>`; 私密登录 picks it up on the next scan, with no restart of this plugin. Cards without a plugin fall back to credential import.
+- **Paste a credential for any provider.** WorkBuddy keeps its four native methods, and 私密登录 adds a fifth: paste a credential JSON, a Cookie header, a curl command, a refresh token or an API key. Every other provider in the list gets the same entry: 私密登录 detects a key or token, keeps only the typed fields magpie stores, refuses duplicates, and never logs or forwards the secret. A WorkBuddy refresh token is spent once to prove it; for providers with no safe endpoint to call, 私密登录 says so instead of claiming a check it did not run.
 - **One proxy per account.** Choose the exit in the add-account dialog and the login browser really uses it.
 - **Test an exit before you trust it.** A real connection through the proxy reports the exit IP, its region and the latency. No direct-connection fallback: if it fails, you see why.
 - **Trust score per exit.** Read the Claude IP trust score that page publishes, opened through that very proxy, and keep the number next to the row.
 - **Accounts keep their identity.** Signing an account out does not throw its browser identity away — signing back in reuses the same one.
-- **Everything stays on this computer.** Proxies, accounts and browser profiles live in your own magpie folder. Stored proxy passwords are never shown to the page and never written to a log. A pasted credential is read once, written into magpie's own account store, and never copied to a file or log of Login's own.
+- **Everything stays on this computer.** Proxies, accounts and browser profiles live in your own magpie folder. Stored proxy passwords are never shown to the page and never written to a log. A pasted credential is read once, written into magpie's own account store, and never copied to a file or log of 私密登录's own.
 - **Four languages.** English, 简体中文, 繁體中文 and 日本語, following magpie's own language setting.
 - **A dark-glass UI.** Frosted panels with real backdrop blur, Mac-style pop-up menus that you can actually read, keyboard support and a light theme, all built on design tokens.
 
 ## Install
 
 1. Open magpie → **Plugins** → **Discover** → **Unofficial**.
-2. Find **Login** by **fenyan5312** and press **Install**.
-3. Open **Login** from the sidebar.
+2. Find **私密登录** by **fenyan5312** and press **Install**.
+3. Open **私密登录** from the sidebar.
 
-If the list has not caught up yet, use **Retry** — magpie caches what GitHub told it. You can also install from a local checkout with `magpie plugin add ./Login`.
+If the list has not caught up yet, use **Retry** — magpie caches what GitHub told it. You can also install from a local checkout with `magpie plugin add ./私密登录`.
 
 > Requires **Windows x64** today. The plugin downloads a stripped-down browser runtime built for Windows; other platforms are not supported yet.
 
 ## Getting started
 
-The first time you sign in, Login downloads its own browser runtime — about **170 MB**, once. Everything after that runs offline from your machine.
+The first time you sign in, 私密登录 downloads its own browser runtime — about **170 MB**, once. Everything after that runs offline from your machine.
 
 1. **Proxy IPs** → add the exits you want to log in through.
 2. Press **Test** on each one and check the exit IP and region look right. Add a trust score if you want a second opinion.
@@ -62,7 +62,7 @@ Pull requests are welcome. [`bun test`](package.json) runs the whole suite; a ch
 
 ## Credits
 
-Login merges two MIT-licensed projects:
+私密登录 merges two MIT-licensed projects:
 
 - [Gruu6y/clean-login](https://github.com/Gruu6y/clean-login) — the page, proxy/account model, isolated browser runtime and sign-in flow.
 - [fenyan5312/magpie-wpt](https://github.com/fenyan5312/magpie-wpt) — the WorkBuddy provider and credential import.

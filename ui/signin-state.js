@@ -31,7 +31,7 @@ export function signInMethodLabel(label) {
   return trimmed ? trimmed : null;
 }
 
-export function signInPayload(provider, proxy, methodLabel = null, account = null) {
+export function signInPayload(provider, proxy, methodLabel = null, account = null, groupId = null) {
   const payload = { provider: String(provider || ""), proxy: signInProxy(proxy) };
   const label = signInMethodLabel(methodLabel);
   if (label) payload.methodLabel = label;
@@ -39,6 +39,9 @@ export function signInPayload(provider, proxy, methodLabel = null, account = nul
   // service looks the directory up and verifies its ledger.
   const claim = signInAccount(account);
   if (claim) payload.account = claim;
+  // The IP group whose per-IP rule allocates the exit. A non-empty proxy above
+  // still wins, but it must be a member of this group.
+  if (typeof groupId === "string" && groupId.trim()) payload.groupId = groupId.trim();
   return payload;
 }
 

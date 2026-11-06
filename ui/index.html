@@ -126,11 +126,23 @@
             <p id="proxies-copy">Each account signs in and makes requests through the proxy you choose.</p>
           </div>
           <div class="section-actions">
+            <button class="button quiet" id="add-proxy-group" type="button">
+              <span id="add-proxy-group-label">New IP group</span>
+            </button>
             <button class="button primary" id="add-proxy" type="button">
               <span aria-hidden="true">+</span>
               <span id="add-proxy-label">Add Proxy</span>
             </button>
           </div>
+        </div>
+        <div class="proxy-groups" id="proxy-groups" hidden>
+          <div class="proxy-groups-head">
+            <div>
+              <h3 id="proxy-groups-title">IP groups</h3>
+              <p class="field-hint" id="proxy-groups-copy">Bind accounts to a group and cap how many accounts may share one IP. Existing accounts keep the IP and fingerprint they signed in with.</p>
+            </div>
+          </div>
+          <div class="proxy-group-list" id="proxy-group-list"></div>
         </div>
         <div class="empty" id="proxies-empty">
           <img src="assets/icon.svg" alt="">
@@ -308,6 +320,12 @@
               <p class="field-hint" id="proxy-password-hint" hidden></p>
             </div>
           </div>
+          <div class="field">
+            <label for="proxy-tags" id="label-tags">Tags</label>
+            <input id="proxy-tags" name="tags" type="text" autocomplete="off" maxlength="700"
+              placeholder="claude, workbuddy">
+            <p class="field-hint" id="proxy-tags-hint">Comma-separated. A tag-mode group selects the IPs carrying its tag.</p>
+          </div>
         </div>
         <p class="form-error" id="proxy-form-error" role="alert" hidden></p>
         <div class="proxy-test-result" id="proxy-test-result" role="status" hidden></div>
@@ -324,6 +342,59 @@
         <button class="button primary" id="save-proxy" type="button">Save</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="proxy-group-dialog" class="dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="proxy-group-dialog-title">New IP group</h3>
+        <p id="proxy-group-dialog-copy">One group, one rule for how many accounts may share each IP.</p>
+      </div>
+      <button class="dialog-close" id="group-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <div class="field">
+          <label for="group-name" id="label-group-name">Name</label>
+          <input id="group-name" type="text" autocomplete="off" maxlength="80"
+            placeholder="Claude 御用 / WorkBuddy 5/IP" required>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="group-provider" id="label-group-provider">Provider</label>
+            <select id="group-provider"></select>
+          </div>
+          <div class="field">
+            <label for="group-mode" id="label-group-mode">Membership</label>
+            <select id="group-mode">
+              <option value="group" id="group-mode-group">Pick IPs</option>
+              <option value="tag" id="group-mode-tag">By tag</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" id="group-tag-field" hidden>
+          <label for="group-tag" id="label-group-tag">Tag</label>
+          <input id="group-tag" type="text" autocomplete="off" maxlength="32"
+            placeholder="claude">
+          <p class="field-hint" id="group-tag-hint">Every proxy carrying this tag is a member.</p>
+        </div>
+        <div class="field">
+          <label for="group-per-ip" id="label-group-per-ip">Accounts per IP</label>
+          <input id="group-per-ip" type="number" min="1" max="50" step="1" inputmode="numeric" value="2">
+          <p class="field-hint" id="group-per-ip-hint">Claude: 1–2. WorkBuddy: 4–5. A sign-in is refused once every IP in the group is full.</p>
+        </div>
+        <div class="field" id="group-members-field">
+          <label id="label-group-members">Member IPs</label>
+          <div class="group-members" id="group-members"></div>
+          <p class="field-hint" id="group-members-hint">No IPs yet. Add proxies first, then pick members here.</p>
+        </div>
+      </div>
+      <p class="form-error" id="group-form-error" role="alert" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button quiet" id="group-cancel" type="button">Cancel</button>
+      <button class="button primary" id="save-group" type="button">Save group</button>
+    </div>
   </dialog>
 
   <dialog id="signin-dialog" class="dialog signin-dialog">
@@ -347,6 +418,11 @@
         <label for="signin-account" id="signin-account-label">Continue with an existing identity</label>
         <select id="signin-account" name="account"></select>
         <p class="field-hint" id="signin-account-hint" hidden></p>
+      </div>
+      <div class="field" id="signin-group-field">
+        <label for="signin-group" id="signin-group-label">IP group</label>
+        <select id="signin-group" name="group"></select>
+        <p class="field-hint" id="signin-group-hint">A group picks the least-loaded IP for a new account. An existing identity keeps the IP it signed in with.</p>
       </div>
       <div class="field" id="signin-proxy-field">
         <label for="signin-proxy" id="signin-proxy-label">Proxy IP</label>

@@ -190,3 +190,26 @@ describe("sortAccounts", () => {
     expect(sorted.map((a) => a.accountId)).toEqual(["Alice", "Bob", "Charlie", "Dave"]);
   });
 });
+
+describe("IP group", () => {
+  test("carries the remembered group and makes it searchable", () => {
+    const raw = {
+      provider: "claude",
+      key: "claude#1",
+      accountId: "Claude A",
+      proxyGroupId: "grp-claude",
+      proxyGroupName: "Claude 御用",
+    };
+    const view = accountView(raw);
+    expect(view.proxyGroupId).toBe("grp-claude");
+    expect(view.proxyGroupName).toBe("Claude 御用");
+    expect(filterAccounts([raw], { query: "御用" })).toHaveLength(1);
+    expect(filterAccounts([raw], { query: "grp-claude" })).toHaveLength(1);
+  });
+
+  test("defaults to empty when the ledger has no group", () => {
+    const view = accountView({ provider: "workbuddy", key: "workbuddy" });
+    expect(view.proxyGroupId).toBe("");
+    expect(view.proxyGroupName).toBe("");
+  });
+});

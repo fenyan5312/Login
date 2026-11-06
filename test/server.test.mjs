@@ -514,6 +514,10 @@ test("static files exist and carry no mock data or dead action buttons", () => {
     "import-close",
     "import-cancel",
     "import-submit",
+    "add-proxy-group",
+    "group-close",
+    "group-cancel",
+    "save-group",
   ];
   expect((html.match(/<button\b/g) || []).length).toBe(buttonIds.length);
   for (const id of buttonIds) expect(html).toContain(`id="${id}"`);
@@ -730,7 +734,8 @@ test("a remote frame without magpie.service gets a clear local message, not a re
   };
   const { went } = await runBoot({ ready: Promise.resolve({ dark: false }) }, { hostname: "server.lan", dom });
   expect(went).toBe("");
-  expect(writes.status).toMatch(/only on the computer/);
+  // The plugin now defaults to Simplified Chinese when the launcher gives no lang.
+  expect(writes.status).toMatch(/只在运行 magpie 的电脑上可用/);
 });
 
 // The provider read must never block navigation. Every failure mode still

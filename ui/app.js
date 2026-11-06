@@ -56,7 +56,7 @@ const reloadGuard = createReloadGuard({ location: globalThis.location, history: 
 
 const messages = {
   en: {
-    title: "Login",
+    title: "私密登录",
     subtitle: "Proxy exits, isolated sign-ins, one account ledger.",
     providers: "Providers",
     proxies: "Proxy IPs",
@@ -110,8 +110,8 @@ const messages = {
     reportCopyFailed: "Copying was blocked. Select the text above and copy it by hand.",
     reportBuildFailed: "The report could not be prepared.",
     signInTitle: "Add account",
-    signInCopy: "This opens an isolated browser window. Complete the sign-in there; Login writes the resulting credential into magpie.",
-    signInUnverified: "This flow has not been verified in Login yet. You can try it directly; failures are reported honestly and feedback is welcome.",
+    signInCopy: "This opens an isolated browser window. Complete the sign-in there; 私密登录 writes the resulting credential into magpie.",
+    signInUnverified: "This flow has not been verified in 私密登录 yet. You can try it directly; failures are reported honestly and feedback is welcome.",
     signInProxyLabel: "Proxy IP",
     signInProxyDirect: "No proxy (direct)",
     signInMethodLabel: "Sign-in method",
@@ -152,8 +152,8 @@ const messages = {
     identitiesError: "The identities could not be loaded.",
     identitiesLoading: "Reading the kept identities…",
     identitiesRetry: "Retry",
-    environmentTitle: "Login browser setup",
-    environmentCopy: "Login needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.",
+    environmentTitle: "私密登录 browser setup",
+    environmentCopy: "私密登录 needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.",
     environmentSizeLabel: "Download",
     environmentSizeValue: "{size} download · about {extracted} on disk",
     environmentDiskLabel: "Free disk space",
@@ -194,6 +194,43 @@ const messages = {
     password: "Password",
     optional: "(optional)",
     addProxyTitle: "Add Proxy IP",
+    addProxyGroup: "New IP group",
+    proxyGroupsTitle: "IP groups",
+    proxyGroupsCopy: "Bind accounts to a group and cap how many accounts may share one IP. Existing accounts keep the IP and fingerprint they signed in with.",
+    groupTitleNew: "New IP group",
+    groupTitleEdit: "Edit IP group",
+    groupDialogCopy: "One group, one rule for how many accounts may share each IP.",
+    groupProviderAll: "All providers",
+    groupProviderLabel: "Provider",
+    tags: "Tags",
+    tag: "Tag",
+    groupMode: "Membership",
+    groupPerIp: "Accounts per IP",
+    groupMembers: "Member IPs",
+    groupModeGroup: "Pick IPs",
+    groupModeTag: "By tag",
+    groupModeGroupShort: "Group",
+    groupModeTagShort: "Tag",
+    groupCap: "{n}/IP",
+    groupLoad: "{used} / {capacity} accounts · {ips} IPs",
+    groupTagHint: "Every proxy carrying this tag is a member.",
+    groupPerIpHint: "Claude: 1–2. WorkBuddy: 4–5. A sign-in is refused once every IP in the group is full.",
+    groupMembersHint: "No IPs yet. Add proxies first, then pick members here.",
+    groupNameRequired: "Give the group a name.",
+    groupPerIpInvalid: "Accounts per IP must be a whole number from 1 to 50.",
+    groupTagRequired: "A tag group needs a tag.",
+    groupSave: "Save group",
+    groupCancel: "Cancel",
+    groupDeleteTitle: "Delete IP group?",
+    groupDeleteCopy: "Delete “{name}”? Its IPs and the accounts' remembered exits are kept.",
+    proxyTagsHint: "Comma-separated. A tag-mode group selects the IPs carrying its tag.",
+    tagsInvalid: "Tags may not contain control characters, and the list is too long.",
+    signInGroupLabel: "IP group",
+    signInGroupNone: "No group (direct / pick an IP)",
+    signInGroupHint: "A group picks the least-loaded IP for a new account. An existing identity keeps the IP it signed in with.",
+    signInGroupHintScoped: "This provider's group is selected by default. An existing identity still keeps the IP it signed in with.",
+    signInProxyGroupAuto: "Auto: least-loaded IP in this group",
+    accountGroupLabel: "Group",
     editProxyTitle: "Edit Proxy IP",
     proxyDialogCopy: "HTTP, HTTPS and SOCKS5 are supported. Passwords are stored locally and never shown again.",
     namePlaceholder: "Singapore · 01",
@@ -296,7 +333,7 @@ const messages = {
     testUnknown: "Could not reach the test endpoint through this proxy.",
     accounts: "Accounts",
     accountsTitle: "Accounts",
-    accountsCopy: "Every account used with Login, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.",
+    accountsCopy: "Every account used with 私密登录, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.",
     accountsRefresh: "Refresh",
     accountsRefreshing: "Refreshing…",
     accountsRefreshed: "Read {count} accounts.",
@@ -313,7 +350,7 @@ const messages = {
     accountFilterSignedOut: "Signed out",
     accountFilterCount: "Showing {shown} / {total}",
     accountEmpty: "No accounts yet",
-    accountEmptyCopy: "Accounts appear here after a sign-in through Login.",
+    accountEmptyCopy: "Accounts appear here after a sign-in through 私密登录.",
     accountNoMatch: "No accounts match these filters.",
     accountColName: "Account",
     accountColFingerprint: "Fingerprint",
@@ -322,7 +359,7 @@ const messages = {
     accountColStatus: "Status",
     accountColActions: "Actions",
     accountUnverified: "Unverified flow",
-    accountUnverifiedTitle: "This account came from a sign-in flow that has not been verified in Login yet.",
+    accountUnverifiedTitle: "This account came from a sign-in flow that has not been verified in 私密登录 yet.",
     accountSignedIn: "Signed in",
     accountSignedOut: "Signed out · identity kept",
     accountCheckNone: "Not checked",
@@ -381,7 +418,7 @@ const messages = {
     accountCheckTimeLabel: "Time",
     accountCheckGradeLabel: "Grade",
     accountCheckIdentityLabel: "Identity used",
-    accountCheckNote: "The site cannot be embedded. Login opens an isolated window, reads the verdict, then closes it.",
+    accountCheckNote: "The site cannot be embedded. 私密登录 opens an isolated window, reads the verdict, then closes it.",
     accountCheckStart: "Start check",
     accountCheckRunningOpening: "Opening the isolated browser…",
     accountCheckRunningReading: "Reading the site's verdict…",
@@ -422,7 +459,7 @@ const messages = {
     toastRefreshed: "Accounts refreshed.",
   },
   "zh-Hans": {
-    title: "Login",
+    title: "私密登录",
     subtitle: "代理出口、隔离登录与账号账本，一处管好。",
     providers: "供应商",
     proxies: "代理 IP",
@@ -476,8 +513,8 @@ const messages = {
     reportCopyFailed: "复制被拦住了，请手动选中上面的正文再复制。",
     reportBuildFailed: "没能生成报告正文。",
     signInTitle: "添加账号",
-    signInCopy: "这会打开一个隔离浏览器窗口。请在窗口里完成登录，Login 会把生成的凭据写入 magpie。",
-    signInUnverified: "该流程还没有在 Login 中验证过。你可以直接尝试，失败会如实报错，也欢迎反馈问题。",
+    signInCopy: "这会打开一个隔离浏览器窗口。请在窗口里完成登录，私密登录 会把生成的凭据写入 magpie。",
+    signInUnverified: "该流程还没有在 私密登录 中验证过。你可以直接尝试，失败会如实报错，也欢迎反馈问题。",
     signInProxyLabel: "代理 IP",
     signInProxyDirect: "不使用代理（直连）",
     signInMethodLabel: "登录方式",
@@ -519,7 +556,7 @@ const messages = {
     identitiesLoading: "正在读取保留的身份…",
     identitiesRetry: "重试",
     environmentTitle: "登录浏览器设置",
-    environmentCopy: "Login 需要一次性准备一个隔离浏览器，登录页面不会出现在日常浏览器中。只有点击“准备”后才会开始下载。",
+    environmentCopy: "私密登录 需要一次性准备一个隔离浏览器，登录页面不会出现在日常浏览器中。只有点击“准备”后才会开始下载。",
     environmentSizeLabel: "下载大小",
     environmentSizeValue: "下载 {size} · 磁盘占用约 {extracted}",
     environmentDiskLabel: "可用磁盘空间",
@@ -560,6 +597,43 @@ const messages = {
     password: "密码",
     optional: "（可选）",
     addProxyTitle: "添加代理 IP",
+    addProxyGroup: "新建 IP 组",
+    proxyGroupsTitle: "IP 组",
+    proxyGroupsCopy: "按分组绑定账号，并限制每个 IP 可承载的账号数。已登录账号保留原来的 IP 与指纹。",
+    groupTitleNew: "新建 IP 组",
+    groupTitleEdit: "编辑 IP 组",
+    groupDialogCopy: "一个分组一条规则：每个 IP 最多承载几个账号。",
+    groupProviderAll: "全部供应商",
+    groupProviderLabel: "供应商",
+    tags: "标签",
+    tag: "标签",
+    groupMode: "成员方式",
+    groupPerIp: "每个 IP 账号数",
+    groupMembers: "成员 IP",
+    groupModeGroup: "手动选 IP",
+    groupModeTag: "按标签",
+    groupModeGroupShort: "分组",
+    groupModeTagShort: "标签",
+    groupCap: "{n} 个/IP",
+    groupLoad: "{used} / {capacity} 个账号 · {ips} 个 IP",
+    groupTagHint: "所有带这个标签的代理都属于该组。",
+    groupPerIpHint: "Claude 建议 1–2，WorkBuddy 建议 4–5。组内 IP 全部满额时会拒绝新的登录，而不是超限。",
+    groupMembersHint: "还没有 IP。先添加代理，再回到这里勾选成员。",
+    groupNameRequired: "请填写分组名称。",
+    groupPerIpInvalid: "每个 IP 的账号数必须是 1–50 的整数。",
+    groupTagRequired: "标签模式必须填写标签。",
+    groupSave: "保存分组",
+    groupCancel: "取消",
+    groupDeleteTitle: "删除 IP 组？",
+    groupDeleteCopy: "删除“{name}”？组内 IP 和账号记住的出口都会保留。",
+    proxyTagsHint: "逗号分隔。标签模式的分组会选中所有带该标签的 IP。",
+    tagsInvalid: "标签不能包含控制字符，且列表不能过长。",
+    signInGroupLabel: "IP 组",
+    signInGroupNone: "不使用分组（直连 / 手动选 IP）",
+    signInGroupHint: "选择分组后，会为新账号分配组内负载最低的 IP；已登录身份沿用上次的 IP。",
+    signInGroupHintScoped: "该供应商的分组已默认选中；已登录身份仍会沿用上次的 IP。",
+    signInProxyGroupAuto: "自动：组内负载最低的 IP",
+    accountGroupLabel: "分组",
     editProxyTitle: "编辑代理 IP",
     proxyDialogCopy: "支持 HTTP、HTTPS 和 SOCKS5。密码只保存在本机，之后不会再显示。",
     namePlaceholder: "新加坡 · 01",
@@ -662,7 +736,7 @@ const messages = {
     testUnknown: "无法通过这个代理访问检测地址。",
     accounts: "账号",
     accountsTitle: "账号",
-    accountsCopy: "通过 Login 登录过的每个账号、它锁定的浏览器指纹，以及 who.1ms.dog 对这个身份的判定。",
+    accountsCopy: "通过 私密登录 登录过的每个账号、它锁定的浏览器指纹，以及 who.1ms.dog 对这个身份的判定。",
     accountsRefresh: "刷新",
     accountsRefreshing: "刷新中…",
     accountsRefreshed: "已读取 {count} 个账号。",
@@ -679,7 +753,7 @@ const messages = {
     accountFilterSignedOut: "已登出",
     accountFilterCount: "显示 {shown} / 共 {total}",
     accountEmpty: "还没有账号",
-    accountEmptyCopy: "通过 Login 登录之后，账号会显示在这里。",
+    accountEmptyCopy: "通过 私密登录 登录之后，账号会显示在这里。",
     accountNoMatch: "没有符合筛选条件的账号。",
     accountColName: "账号",
     accountColFingerprint: "指纹",
@@ -688,7 +762,7 @@ const messages = {
     accountColStatus: "状态",
     accountColActions: "操作",
     accountUnverified: "未验证流程",
-    accountUnverifiedTitle: "这个账号来自一条还没有在 Login 中验证过的登录流程。",
+    accountUnverifiedTitle: "这个账号来自一条还没有在 私密登录 中验证过的登录流程。",
     accountSignedIn: "已登录",
     accountSignedOut: "已登出 · 保留身份",
     accountCheckNone: "未检测",
@@ -747,7 +821,7 @@ const messages = {
     accountCheckTimeLabel: "时间",
     accountCheckGradeLabel: "评级",
     accountCheckIdentityLabel: "使用身份",
-    accountCheckNote: "该站点不允许被其他页面嵌入。Login 会打开一个隔离窗口，读完判定就关掉。",
+    accountCheckNote: "该站点不允许被其他页面嵌入。私密登录 会打开一个隔离窗口，读完判定就关掉。",
     accountCheckStart: "开始检测",
     accountCheckRunningOpening: "正在打开隔离浏览器…",
     accountCheckRunningReading: "正在读取站点的判定…",
@@ -788,7 +862,7 @@ const messages = {
     toastRefreshed: "账号列表已刷新。",
   },
   "zh-Hant": {
-    title: "Login",
+    title: "私密登录",
     subtitle: "代理出口、隔離登入與帳號帳本，一處管好。",
     providers: "供應商",
     proxies: "代理 IP",
@@ -842,8 +916,8 @@ const messages = {
     reportCopyFailed: "複製被攔住了，請手動選取上面的正文再複製。",
     reportBuildFailed: "沒能產生回報正文。",
     signInTitle: "新增帳號",
-    signInCopy: "這會開啟一個隔離瀏覽器視窗。請在視窗裡完成登入，Login 會把產生的憑證寫入 magpie。",
-    signInUnverified: "此流程尚未在 Login 中驗證過。你可以直接嘗試，失敗會如實回報，也歡迎回報問題。",
+    signInCopy: "這會開啟一個隔離瀏覽器視窗。請在視窗裡完成登入，私密登录 會把產生的憑證寫入 magpie。",
+    signInUnverified: "此流程尚未在 私密登录 中驗證過。你可以直接嘗試，失敗會如實回報，也歡迎回報問題。",
     signInProxyLabel: "代理 IP",
     signInProxyDirect: "不使用代理（直連）",
     signInMethodLabel: "登入方式",
@@ -885,7 +959,7 @@ const messages = {
     identitiesLoading: "正在讀取保留的身分…",
     identitiesRetry: "重試",
     environmentTitle: "登入瀏覽器設定",
-    environmentCopy: "Login 需要一次性準備一個隔離瀏覽器，登入頁面不會出現在日常瀏覽器中。只有點擊「準備」後才會開始下載。",
+    environmentCopy: "私密登录 需要一次性準備一個隔離瀏覽器，登入頁面不會出現在日常瀏覽器中。只有點擊「準備」後才會開始下載。",
     environmentSizeLabel: "下載大小",
     environmentSizeValue: "下載 {size} · 磁碟佔用約 {extracted}",
     environmentDiskLabel: "可用磁碟空間",
@@ -926,6 +1000,43 @@ const messages = {
     password: "密碼",
     optional: "（選填）",
     addProxyTitle: "新增代理 IP",
+    addProxyGroup: "新增 IP 組",
+    proxyGroupsTitle: "IP 組",
+    proxyGroupsCopy: "依分組綁定帳號，並限制每個 IP 可承載的帳號數。已登入帳號保留原本的 IP 與指紋。",
+    groupTitleNew: "新增 IP 組",
+    groupTitleEdit: "編輯 IP 組",
+    groupDialogCopy: "一個分組一條規則：每個 IP 最多承載幾個帳號。",
+    groupProviderAll: "全部供應商",
+    groupProviderLabel: "供應商",
+    tags: "標籤",
+    tag: "標籤",
+    groupMode: "成員方式",
+    groupPerIp: "每個 IP 帳號數",
+    groupMembers: "成員 IP",
+    groupModeGroup: "手動選 IP",
+    groupModeTag: "依標籤",
+    groupModeGroupShort: "分組",
+    groupModeTagShort: "標籤",
+    groupCap: "{n} 個/IP",
+    groupLoad: "{used} / {capacity} 個帳號 · {ips} 個 IP",
+    groupTagHint: "所有帶這個標籤的代理都屬於該組。",
+    groupPerIpHint: "Claude 建議 1–2，WorkBuddy 建議 4–5。組內 IP 全部滿額時會拒絕新的登入，而不是超限。",
+    groupMembersHint: "還沒有 IP。先新增代理，再回到這裡勾選成員。",
+    groupNameRequired: "請填寫分組名稱。",
+    groupPerIpInvalid: "每個 IP 的帳號數必須是 1–50 的整數。",
+    groupTagRequired: "標籤模式必須填寫標籤。",
+    groupSave: "儲存分組",
+    groupCancel: "取消",
+    groupDeleteTitle: "刪除 IP 組？",
+    groupDeleteCopy: "刪除「{name}」？組內 IP 和帳號記住的出口都會保留。",
+    proxyTagsHint: "逗號分隔。標籤模式的分組會選中所有帶該標籤的 IP。",
+    tagsInvalid: "標籤不能包含控制字元，且列表不能過長。",
+    signInGroupLabel: "IP 組",
+    signInGroupNone: "不使用分組（直連 / 手動選 IP）",
+    signInGroupHint: "選擇分組後，會為新帳號分配組內負載最低的 IP；已登入身分沿用上次的 IP。",
+    signInGroupHintScoped: "該供應商的分組已預設選中；已登入身分仍會沿用上次的 IP。",
+    signInProxyGroupAuto: "自動：組內負載最低的 IP",
+    accountGroupLabel: "分組",
     editProxyTitle: "編輯代理 IP",
     proxyDialogCopy: "支援 HTTP、HTTPS 和 SOCKS5。密碼只保存在本機，之後不會再顯示。",
     namePlaceholder: "新加坡 · 01",
@@ -1028,7 +1139,7 @@ const messages = {
     testUnknown: "無法透過這個代理存取檢測位址。",
     accounts: "帳號",
     accountsTitle: "帳號",
-    accountsCopy: "透過 Login 登入過的每個帳號、它鎖定的瀏覽器指紋，以及 who.1ms.dog 對這個身分的判定。",
+    accountsCopy: "透過 私密登录 登入過的每個帳號、它鎖定的瀏覽器指紋，以及 who.1ms.dog 對這個身分的判定。",
     accountsRefresh: "重新整理",
     accountsRefreshing: "重新整理中…",
     accountsRefreshed: "已讀取 {count} 個帳號。",
@@ -1045,7 +1156,7 @@ const messages = {
     accountFilterSignedOut: "已登出",
     accountFilterCount: "顯示 {shown} / 共 {total}",
     accountEmpty: "還沒有帳號",
-    accountEmptyCopy: "透過 Login 登入之後，帳號會顯示在這裡。",
+    accountEmptyCopy: "透過 私密登录 登入之後，帳號會顯示在這裡。",
     accountNoMatch: "沒有符合篩選條件的帳號。",
     accountColName: "帳號",
     accountColFingerprint: "指紋",
@@ -1054,7 +1165,7 @@ const messages = {
     accountColStatus: "狀態",
     accountColActions: "操作",
     accountUnverified: "未驗證流程",
-    accountUnverifiedTitle: "這個帳號來自一條還沒有在 Login 中驗證過的登入流程。",
+    accountUnverifiedTitle: "這個帳號來自一條還沒有在 私密登录 中驗證過的登入流程。",
     accountSignedIn: "已登入",
     accountSignedOut: "已登出 · 保留身分",
     accountCheckNone: "未檢測",
@@ -1113,7 +1224,7 @@ const messages = {
     accountCheckTimeLabel: "時間",
     accountCheckGradeLabel: "評級",
     accountCheckIdentityLabel: "使用身分",
-    accountCheckNote: "該站點不允許被其他頁面嵌入。Login 會開啟一個隔離視窗，讀完判定就關掉。",
+    accountCheckNote: "該站點不允許被其他頁面嵌入。私密登录 會開啟一個隔離視窗，讀完判定就關掉。",
     accountCheckStart: "開始檢測",
     accountCheckRunningOpening: "正在開啟隔離瀏覽器…",
     accountCheckRunningReading: "正在讀取站點的判定…",
@@ -1154,7 +1265,7 @@ const messages = {
     toastRefreshed: "帳號清單已重新整理。",
   },
   ja: {
-    title: "Login",
+    title: "私密登录",
     subtitle: "プロキシ出口・分離ログイン・アカウント台帳を一か所で。",
     providers: "プロバイダー",
     proxies: "プロキシ IP",
@@ -1208,8 +1319,8 @@ const messages = {
     reportCopyFailed: "コピーできませんでした。上の本文を選択して手動でコピーしてください。",
     reportBuildFailed: "報告本文を作成できませんでした。",
     signInTitle: "アカウントを追加",
-    signInCopy: "隔離されたブラウザーウィンドウを開きます。そこでログインすると、Loginが得られた認証情報を magpie に書き込みます。",
-    signInUnverified: "このフローはLoginではまだ検証されていません。そのまま試せます。失敗はそのまま表示され、問題の報告も歓迎します。",
+    signInCopy: "隔離されたブラウザーウィンドウを開きます。そこでログインすると、私密登录が得られた認証情報を magpie に書き込みます。",
+    signInUnverified: "このフローは私密登录ではまだ検証されていません。そのまま試せます。失敗はそのまま表示され、問題の報告も歓迎します。",
     signInProxyLabel: "プロキシ IP",
     signInProxyDirect: "プロキシを使用しない（直接接続）",
     signInMethodLabel: "ログイン方法",
@@ -1251,7 +1362,7 @@ const messages = {
     identitiesLoading: "保持されているIDを読み込み中…",
     identitiesRetry: "再試行",
     environmentTitle: "ログイン用ブラウザーの準備",
-    environmentCopy: "Loginは、ログインページが普段のブラウザーに残らないよう、一度だけ隔離されたブラウザーを準備します。「準備」を選ぶまでダウンロードは始まりません。",
+    environmentCopy: "私密登录は、ログインページが普段のブラウザーに残らないよう、一度だけ隔離されたブラウザーを準備します。「準備」を選ぶまでダウンロードは始まりません。",
     environmentSizeLabel: "ダウンロード",
     environmentSizeValue: "ダウンロード {size} · ディスク約 {extracted}",
     environmentDiskLabel: "空きディスク容量",
@@ -1292,6 +1403,44 @@ const messages = {
     password: "パスワード",
     optional: "（任意）",
     addProxyTitle: "プロキシ IP を追加",
+    addProxyGroup: "IP グループを作成",
+    proxyGroupsTitle: "IP グループ",
+    proxyGroupsCopy: "アカウントをグループに割り当て、1 つの IP を共有できるアカウント数を制限します。既存アカウントは以前の IP と指紋を保持します。",
+    groupTitleNew: "IP グループを作成",
+    groupTitleEdit: "IP グループを編集",
+    groupDialogCopy: "1 つのグループに 1 つのルール：各 IP を共有できるアカウント数。",
+    groupProviderAll: "すべてのプロバイダー",
+    groupProviderLabel: "プロバイダー",
+    tags: "タグ",
+    tag: "タグ",
+    groupMode: "メンバー方式",
+    groupPerIp: "IP あたりのアカウント数",
+    groupMembers: "メンバー IP",
+    groupModeGroup: "IP を選択",
+    groupModeTag: "タグで選択",
+    groupModeGroupShort: "グループ",
+    groupModeTagShort: "タグ",
+    groupCap: "{n} 件/IP",
+    groupLoad: "{used} / {capacity} アカウント · {ips} IP",
+    groupTagHint: "このタグを持つプロキシがすべてメンバーになります。",
+    groupPerIpHint: "Claude は 1–2、WorkBuddy は 4–5 が目安です。グループ内の全 IP が満杯になると、上限を超えずにサインインを拒否します。",
+    groupMembersHint: "IP がまだありません。先にプロキシを追加してから、ここでメンバーを選んでください。",
+    groupNameRequired: "グループ名を入力してください。",
+    groupPerIpInvalid: "IP あたりのアカウント数は 1–50 の整数で入力してください。",
+    groupTagRequired: "タグモードにはタグが必要です。",
+    groupSave: "グループを保存",
+    groupCancel: "キャンセル",
+    groupCancel: "キャンセル",
+    groupDeleteTitle: "IP グループを削除しますか？",
+    groupDeleteCopy: "「{name}」を削除しますか？グループ内の IP とアカウントが記憶した出口は保持されます。",
+    proxyTagsHint: "カンマ区切り。タグモードのグループはこのタグを持つ IP を選びます。",
+    tagsInvalid: "タグに制御文字を含めることはできず、リストも長すぎます。",
+    signInGroupLabel: "IP グループ",
+    signInGroupNone: "グループ不使用（直接接続 / IP を選択）",
+    signInGroupHint: "グループを選ぶと、新規アカウントには負荷が最も低い IP が割り当てられます。既存の ID は前回の IP を引き続き使います。",
+    signInGroupHintScoped: "このプロバイダーのグループが既定で選択されています。既存の ID は前回の IP を引き続き使います。",
+    signInProxyGroupAuto: "自動：グループ内で最も空いている IP",
+    accountGroupLabel: "グループ",
     editProxyTitle: "プロキシ IP を編集",
     proxyDialogCopy: "HTTP、HTTPS、SOCKS5 に対応しています。パスワードはローカルに保存され、再表示されません。",
     namePlaceholder: "シンガポール · 01",
@@ -1394,7 +1543,7 @@ const messages = {
     testUnknown: "このプロキシ経由でテスト先に到達できません。",
     accounts: "アカウント",
     accountsTitle: "アカウント",
-    accountsCopy: "Loginでログインした各アカウント、固定されたブラウザー指紋、who.1ms.dog による判定を表示します。",
+    accountsCopy: "私密登录でログインした各アカウント、固定されたブラウザー指紋、who.1ms.dog による判定を表示します。",
     accountsRefresh: "再読み込み",
     accountsRefreshing: "再読み込み中…",
     accountsRefreshed: "{count} 件のアカウントを読み込みました。",
@@ -1411,7 +1560,7 @@ const messages = {
     accountFilterSignedOut: "ログアウト済み",
     accountFilterCount: "{shown} / {total} 件を表示",
     accountEmpty: "アカウントがありません",
-    accountEmptyCopy: "Loginでログインすると、ここにアカウントが表示されます。",
+    accountEmptyCopy: "私密登录でログインすると、ここにアカウントが表示されます。",
     accountNoMatch: "条件に一致するアカウントがありません。",
     accountColName: "アカウント",
     accountColFingerprint: "指紋",
@@ -1420,7 +1569,7 @@ const messages = {
     accountColStatus: "状態",
     accountColActions: "操作",
     accountUnverified: "未検証のフロー",
-    accountUnverifiedTitle: "このアカウントはLoginで未検証のログインフローから作成されました。",
+    accountUnverifiedTitle: "このアカウントは私密登录で未検証のログインフローから作成されました。",
     accountSignedIn: "ログイン中",
     accountSignedOut: "ログアウト済み · 身分を保持",
     accountCheckNone: "未判定",
@@ -1479,7 +1628,7 @@ const messages = {
     accountCheckTimeLabel: "時刻",
     accountCheckGradeLabel: "ランク",
     accountCheckIdentityLabel: "使用する身分",
-    accountCheckNote: "このサイトは埋め込みできません。Loginが隔離ウィンドウを開き、判定を読み取って閉じます。",
+    accountCheckNote: "このサイトは埋め込みできません。私密登录が隔離ウィンドウを開き、判定を読み取って閉じます。",
     accountCheckStart: "判定を開始",
     accountCheckRunningOpening: "隔離ブラウザーを開いています…",
     accountCheckRunningReading: "サイトの判定を読み取っています…",
@@ -1533,7 +1682,7 @@ function languageOf(lang) {
 }
 
 const query = new URLSearchParams(location.search);
-const langKey = languageOf(query.get("lang") || navigator.language);
+const langKey = languageOf(query.get("lang") || "zh-Hans");
 const text = messages[langKey] || messages.en;
 document.documentElement.lang = messages[langKey] ? langKey : "en";
 
@@ -1551,6 +1700,7 @@ const token = document.querySelector('meta[name="clean-login-token"]')?.content 
 const byId = (id) => document.getElementById(id);
 
 let proxies = [];
+let proxyGroups = [];
 const rowTests = new Map();
 // Filter state is per document and never persisted: magpie mounts the page in
 // an opaque-origin sandbox frame where web storage is not available.
@@ -1569,6 +1719,7 @@ const confirmController = createConfirmController();
 let confirmKind = "proxy";
 let pendingIdentity = null;
 let dialogContext = null;
+let groupContext = null;
 let deleting = false;
 let environment = null;
 let environmentJob = null;
@@ -1725,6 +1876,9 @@ function applyText() {
   byId("proxies-empty-copy").textContent = text.proxiesEmptyCopy;
   byId("add-proxy-label").textContent = text.addProxy;
   byId("add-proxy-empty").textContent = text.addProxy;
+  byId("add-proxy-group-label").textContent = text.addProxyGroup;
+  byId("proxy-groups-title").textContent = text.proxyGroupsTitle;
+  byId("proxy-groups-copy").textContent = text.proxyGroupsCopy;
   byId("retry").textContent = text.retry;
   byId("col-name").textContent = text.colName;
   byId("col-address").textContent = text.colAddress;
@@ -1757,6 +1911,26 @@ function applyText() {
   byId("proxy-cancel").textContent = text.cancel;
   byId("save-proxy").textContent = text.save;
   byId("proxy-close").setAttribute("aria-label", text.close);
+  byId("label-tags").textContent = text.tags;
+  byId("proxy-tags-hint").textContent = text.proxyTagsHint;
+  byId("proxy-group-dialog-title").textContent = text.groupTitleNew;
+  byId("proxy-group-dialog-copy").textContent = text.groupDialogCopy;
+  byId("label-group-name").textContent = text.name;
+  byId("label-group-provider").textContent = text.groupProviderLabel;
+  byId("label-group-mode").textContent = text.groupMode;
+  byId("group-mode-group").textContent = text.groupModeGroup;
+  byId("group-mode-tag").textContent = text.groupModeTag;
+  byId("label-group-tag").textContent = text.tag;
+  byId("group-tag-hint").textContent = text.groupTagHint;
+  byId("label-group-per-ip").textContent = text.groupPerIp;
+  byId("group-per-ip-hint").textContent = text.groupPerIpHint;
+  byId("label-group-members").textContent = text.groupMembers;
+  byId("group-members-hint").textContent = text.groupMembersHint;
+  byId("group-cancel").textContent = text.groupCancel;
+  byId("save-group").textContent = text.groupSave;
+  byId("group-close").setAttribute("aria-label", text.close);
+  byId("signin-group-label").textContent = text.signInGroupLabel;
+  byId("signin-group-hint").textContent = text.signInGroupHint;
   byId("confirm-title").textContent = text.deleteTitle;
   byId("confirm-copy").textContent = "";
   byId("confirm-cancel").textContent = text.cancel;
@@ -2046,6 +2220,18 @@ function proxyRow(proxy) {
   const type = document.createElement("small");
   type.textContent = String(proxy.type || "").toUpperCase();
   name.append(title, type);
+  const tags = Array.isArray(proxy.tags) ? proxy.tags : [];
+  if (tags.length) {
+    const tagWrap = document.createElement("div");
+    tagWrap.className = "proxy-tags";
+    for (const tag of tags) {
+      const chip = document.createElement("span");
+      chip.className = "proxy-tag";
+      chip.textContent = tag;
+      tagWrap.append(chip);
+    }
+    name.append(tagWrap);
+  }
 
   const address = document.createElement("div");
   address.className = "proxy-address";
@@ -2113,6 +2299,73 @@ function proxyRow(proxy) {
   return row;
 }
 
+function proxyGroupCard(group) {
+  const card = document.createElement("div");
+  card.className = "proxy-group-card";
+  card.dataset.groupId = group.id;
+
+  const head = document.createElement("div");
+  head.className = "proxy-group-name";
+  const name = document.createElement("strong");
+  name.textContent = group.name;
+  const mode = document.createElement("span");
+  mode.textContent = group.mode === "tag" ? text.groupModeTagShort : text.groupModeGroupShort;
+  head.append(name, mode);
+
+  const meta = document.createElement("div");
+  meta.className = "proxy-group-meta";
+  const providerTag = document.createElement("span");
+  const entry = group.provider ? accountProviderEntry(group.provider) : null;
+  providerTag.textContent = group.provider
+    ? `${text.groupProviderLabel} ${entry?.name || group.provider}`
+    : text.groupProviderAll;
+  const capTag = document.createElement("span");
+  capTag.textContent = (group.mode === "tag" ? `${group.tag} · ` : "") + text.groupCap.replace("{n}", String(group.perIp));
+  meta.append(providerTag, capTag);
+
+  const load = document.createElement("div");
+  load.className = "proxy-group-load";
+  const counts = group.usage && typeof group.usage === "object" ? Object.values(group.usage) : [];
+  const used = Number.isFinite(group.used) ? group.used : counts.reduce((sum, n) => sum + n, 0);
+  const capacity = Number.isFinite(group.capacity) ? group.capacity : 0;
+  load.textContent = text.groupLoad
+    .replace("{used}", String(used))
+    .replace("{capacity}", String(capacity))
+    .replace("{ips}", String(Array.isArray(group.members) ? group.members.length : 0));
+
+  const actions = document.createElement("div");
+  actions.className = "proxy-group-actions";
+  const edit = miniButton(text.edit, () => openGroupDialog(group));
+  const remove = miniButton(text.delete, () => askDeleteGroup(group), true);
+  actions.append(edit, remove);
+
+  card.append(head, meta, load, actions);
+  return card;
+}
+
+function renderProxyGroups() {
+  const section = byId("proxy-groups");
+  const list = byId("proxy-group-list");
+  const hasGroups = proxyGroups.length > 0;
+  section.hidden = !hasGroups;
+  list.textContent = "";
+  if (!hasGroups) return;
+  for (const group of proxyGroups) list.append(proxyGroupCard(group));
+}
+
+async function reloadProxyGroups() {
+  try {
+    const data = await api("api/proxy-groups");
+    if (Array.isArray(data?.groups)) {
+      proxyGroups = data.groups;
+      renderProxyGroups();
+    }
+  } catch {
+    // The group list is an enhancement over the proxy table; a failed read
+    // leaves the last known groups in place.
+  }
+}
+
 function renderProxies() {
   const list = byId("proxies-list");
   const empty = byId("proxies-empty");
@@ -2124,6 +2377,7 @@ function renderProxies() {
   table.hidden = !hasProxies;
   filters.hidden = !hasProxies;
   list.textContent = "";
+  renderProxyGroups();
   if (!hasProxies) {
     renderScoreBar();
     return;
@@ -2924,14 +3178,51 @@ function renderSignIn() {
   instructionsNode.textContent = instructions;
 }
 
+function signInGroupSelection() {
+  const id = byId("signin-group").value;
+  return proxyGroups.find((group) => group.id === id) || null;
+}
+
+function proxiesOfGroup(group) {
+  if (!group) return proxies;
+  if (group.mode === "tag") {
+    return proxies.filter((proxy) => Array.isArray(proxy.tags) && proxy.tags.includes(group.tag));
+  }
+  const ids = new Set(Array.isArray(group.proxyIds) ? group.proxyIds : []);
+  return proxies.filter((proxy) => ids.has(proxy.id));
+}
+
+function renderSignInGroups() {
+  const select = byId("signin-group");
+  select.textContent = "";
+  const none = document.createElement("option");
+  none.value = "";
+  none.textContent = text.signInGroupNone;
+  select.append(none);
+  for (const group of proxyGroups) {
+    const option = document.createElement("option");
+    option.value = group.id;
+    option.textContent = `${group.name} · ${text.groupCap.replace("{n}", String(group.perIp))}`;
+    select.append(option);
+  }
+  // A provider with exactly one group uses it by default; the service applies
+  // the same rule when the page omits the group.
+  const provider = signInContext?.provider || "";
+  const scoped = proxyGroups.filter((group) => group.provider === provider);
+  select.value = scoped.length === 1 ? scoped[0].id : "";
+  const hint = byId("signin-group-hint");
+  hint.textContent = scoped.length ? text.signInGroupHintScoped : text.signInGroupHint;
+}
+
 function renderSignInProxies() {
   const select = byId("signin-proxy");
   select.textContent = "";
+  const group = signInGroupSelection();
   const direct = document.createElement("option");
   direct.value = "";
-  direct.textContent = text.signInProxyDirect;
+  direct.textContent = group ? text.signInProxyGroupAuto : text.signInProxyDirect;
   select.append(direct);
-  for (const proxy of proxies) {
+  for (const proxy of proxiesOfGroup(group)) {
     const option = document.createElement("option");
     option.value = proxy.id;
     // Name plus address only; never the password (the API omits it and the page
@@ -3091,6 +3382,7 @@ function openSignInDialog(provider, options = {}) {
   byId("signin-provider").textContent = signInContext.name;
   renderSignInMethods(provider);
   renderSignInAccounts(provider);
+  renderSignInGroups();
   renderSignInProxies();
   renderSignInPreselection();
   byId("signin-proxy").value = "";
@@ -3146,6 +3438,7 @@ async function startSignIn() {
         selectedSignInProxy(),
         selectedSignInMethod(),
         selectedSignInAccount(),
+        byId("signin-group").value,
       ),
     });
     if (signInContext !== context) return;
@@ -3476,6 +3769,7 @@ function render(data) {
     ? view.providers
     : Array.isArray(data?.providers) ? data.providers : [];
   proxies = Array.isArray(data?.proxies) ? data.proxies : [];
+  proxyGroups = Array.isArray(data?.groups) ? data.groups : [];
   checkProxies = proxies;
   renderProviders(providers);
   renderProviderSources(view);
@@ -3785,6 +4079,7 @@ function dialogValues() {
     port: byId("proxy-port").value,
     username: byId("proxy-username").value,
     password: byId("proxy-password").value,
+    tags: byId("proxy-tags").value,
   });
 }
 
@@ -3816,6 +4111,9 @@ function validationError(values, requireName) {
       field: "proxy-password",
     };
   }
+  if (values.tags.length > 700 || /[\u0000-\u001f\u007f]/.test(values.tags)) {
+    return { key: "tagsInvalid", field: "proxy-tags" };
+  }
   return null;
 }
 
@@ -3835,6 +4133,7 @@ function payloadFor(values) {
     username: values.username,
   };
   if (values.password) payload.password = values.password;
+  payload.tags = values.tags;
   return payload;
 }
 
@@ -3890,6 +4189,7 @@ function openProxyDialog(proxy = null) {
   byId("proxy-port").value = proxy?.port != null ? String(proxy.port) : "";
   byId("proxy-username").value = proxy?.username || "";
   byId("proxy-password").value = "";
+  byId("proxy-tags").value = Array.isArray(proxy?.tags) ? proxy.tags.join(", ") : "";
   const hint = byId("proxy-password-hint");
   if (proxy?.hasPassword) {
     hint.textContent = text.passwordKeepHint;
@@ -3907,6 +4207,160 @@ function closeProxyDialog() {
   const dialog = byId("proxy-dialog");
   if (dialog.open) dialog.close();
   else cleanupProxyDialog();
+}
+
+// --- IP groups -------------------------------------------------------------
+
+function groupProviderOptions(current) {
+  const seen = new Set();
+  const options = [];
+  for (const provider of providerCatalog) {
+    const id = typeof provider?.signInProvider === "string" ? provider.signInProvider : "";
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    options.push({ id, label: `${provider.name || id} · ${id}` });
+  }
+  if (current && !seen.has(current)) options.push({ id: current, label: current });
+  options.sort((a, b) => a.label.localeCompare(b.label));
+  return options;
+}
+
+function renderGroupProviderSelect(current) {
+  const select = byId("group-provider");
+  select.textContent = "";
+  const all = document.createElement("option");
+  all.value = "";
+  all.textContent = text.groupProviderAll;
+  select.append(all);
+  for (const option of groupProviderOptions(current)) {
+    const node = document.createElement("option");
+    node.value = option.id;
+    node.textContent = option.label;
+    select.append(node);
+  }
+  select.value = current || "";
+}
+
+function renderGroupMembers(group) {
+  const wrap = byId("group-members");
+  wrap.textContent = "";
+  const checked = new Set(group?.mode === "group" ? group.proxyIds || [] : []);
+  byId("group-members-hint").hidden = proxies.length > 0;
+  for (const proxy of proxies) {
+    const label = document.createElement("label");
+    label.className = "group-member";
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.value = proxy.id;
+    box.checked = checked.has(proxy.id);
+    const name = document.createElement("span");
+    const region = proxy.region ? ` · ${proxy.region}` : "";
+    name.textContent = `${proxy.name || proxy.id}${region} · ${formatAddress(proxy)}`;
+    label.append(box, name);
+    wrap.append(label);
+  }
+}
+
+function syncGroupModeFields() {
+  const tagMode = byId("group-mode").value === "tag";
+  byId("group-tag-field").hidden = !tagMode;
+  byId("group-members-field").hidden = tagMode;
+}
+
+function setGroupError(message) {
+  const node = byId("group-form-error");
+  node.textContent = message || "";
+  node.hidden = !message;
+}
+
+function openGroupDialog(group = null) {
+  const dialog = byId("proxy-group-dialog");
+  if (dialog.open) return;
+  groupContext = {
+    mode: group ? "edit" : "create",
+    id: group?.id || "",
+  };
+  setGroupError("");
+  byId("proxy-group-dialog-title").textContent = group ? text.groupTitleEdit : text.groupTitleNew;
+  byId("group-name").value = group?.name || "";
+  byId("group-mode").value = group?.mode === "tag" ? "tag" : "group";
+  byId("group-tag").value = group?.tag || "";
+  byId("group-per-ip").value = String(group?.perIp || (group?.provider === "workbuddy" ? 5 : 2));
+  renderGroupProviderSelect(group?.provider || "");
+  renderGroupMembers(group);
+  syncGroupModeFields();
+  dialog.showModal();
+  byId("group-name").focus();
+}
+
+function closeGroupDialog() {
+  const dialog = byId("proxy-group-dialog");
+  if (dialog.open) dialog.close();
+  else cleanupGroupDialog();
+}
+
+function cleanupGroupDialog() {
+  groupContext = null;
+  setGroupError("");
+}
+
+function groupFormValues() {
+  return {
+    name: byId("group-name").value.trim(),
+    provider: byId("group-provider").value,
+    mode: byId("group-mode").value === "tag" ? "tag" : "group",
+    tag: byId("group-tag").value.trim(),
+    perIp: Number(byId("group-per-ip").value),
+    proxyIds: [...byId("group-members").querySelectorAll('input[type="checkbox"]')]
+      .filter((box) => box.checked)
+      .map((box) => box.value),
+  };
+}
+
+async function saveGroup() {
+  const current = groupContext;
+  if (!current) return;
+  const values = groupFormValues();
+  if (!values.name) {
+    setGroupError(text.groupNameRequired);
+    byId("group-name").focus();
+    return;
+  }
+  if (!Number.isInteger(values.perIp) || values.perIp < 1 || values.perIp > 50) {
+    setGroupError(text.groupPerIpInvalid);
+    byId("group-per-ip").focus();
+    return;
+  }
+  if (values.mode === "tag" && !values.tag) {
+    setGroupError(text.groupTagRequired);
+    byId("group-tag").focus();
+    return;
+  }
+  const save = byId("save-group");
+  save.disabled = true;
+  setGroupError("");
+  try {
+    const path = current.mode === "edit"
+      ? `api/proxy-groups/${encodeURIComponent(current.id)}`
+      : "api/proxy-groups";
+    const data = await api(path, {
+      method: current.mode === "edit" ? "PATCH" : "POST",
+      body: values,
+    });
+    const saved = data?.group;
+    if (saved) {
+      const index = proxyGroups.findIndex((item) => item.id === saved.id);
+      if (index >= 0) proxyGroups = proxyGroups.map((item) => (item.id === saved.id ? saved : item));
+      else proxyGroups = [...proxyGroups, saved];
+      renderProxyGroups();
+      renderSignInGroups?.();
+    }
+    save.disabled = false;
+    closeGroupDialog();
+  } catch (error) {
+    save.disabled = false;
+    setGroupError(serverErrorText(error));
+  }
 }
 
 function showTestResult(result) {
@@ -4007,6 +4461,8 @@ async function saveProxy() {
     replaceProxy(saved);
     if (byId("proxy-dialog").open) closeProxyDialog();
     renderProxies();
+    // Tags decide tag-mode membership and a deleted IP leaves a group.
+    reloadProxyGroups();
     // A dialog test checks the draft connection. After Save, run the real row
     // test so the list reflects the saved revision.
     if (testedValues && saved.status !== "ok") testRowProxy(saved.id);
@@ -4027,6 +4483,20 @@ function askDelete(proxy) {
   pendingIdentity = null;
   byId("confirm-title").textContent = text.deleteTitle;
   byId("confirm-copy").textContent = text.deleteCopy.replace("{name}", target.name);
+  byId("confirm-action").textContent = text.deleteConfirm;
+  setConfirmError("");
+  setConfirmBusy(false);
+  dialog.showModal();
+}
+
+function askDeleteGroup(group) {
+  const dialog = byId("confirm-dialog");
+  if (dialog.open) return;
+  const target = confirmController.ask(group.id, group.name);
+  confirmKind = "group";
+  pendingIdentity = null;
+  byId("confirm-title").textContent = text.groupDeleteTitle;
+  byId("confirm-copy").textContent = text.groupDeleteCopy.replace("{name}", target.name);
   byId("confirm-action").textContent = text.deleteConfirm;
   setConfirmError("");
   setConfirmBusy(false);
@@ -4066,6 +4536,30 @@ async function confirmDelete() {
     if (account) await clearIdentity(account);
     return;
   }
+  if (confirmKind === "group") {
+    deleting = true;
+    setConfirmBusy(true);
+    setConfirmError("");
+    try {
+      await api(`api/proxy-groups/${encodeURIComponent(target.id)}`, { method: "DELETE" });
+      confirmController.take(target.id);
+      proxyGroups = proxyGroups.filter((item) => item.id !== target.id);
+      deleting = false;
+      if (byId("confirm-dialog").open) byId("confirm-dialog").close();
+      else cleanupConfirmDialog();
+      renderProxyGroups();
+      if (signInContext) renderSignInGroups();
+    } catch (error) {
+      deleting = false;
+      if (byId("confirm-dialog").open) {
+        setConfirmError(apiErrorText(error.code));
+        setConfirmBusy(false);
+      } else {
+        confirmController.cancel();
+      }
+    }
+    return;
+  }
   deleting = true;
   setConfirmBusy(true);
   setConfirmError("");
@@ -4078,6 +4572,7 @@ async function confirmDelete() {
     if (byId("confirm-dialog").open) byId("confirm-dialog").close();
     else cleanupConfirmDialog();
     renderProxies();
+    reloadProxyGroups();
   } catch (error) {
     deleting = false;
     if (byId("confirm-dialog").open) {
@@ -4166,6 +4661,12 @@ function accountRow(account) {
   const small = document.createElement("small");
   small.textContent = `${view.providerLabel} · ${view.key}`;
   name.append(line, small);
+  if (view.proxyGroupName) {
+    const group = document.createElement("small");
+    group.className = "account-group";
+    group.textContent = `${text.accountGroupLabel} ${view.proxyGroupName}`;
+    name.append(group);
+  }
 
   const fingerprint = accountCell(
     "proxy-address account-fingerprint account-cell-fingerprint",
@@ -4797,6 +5298,15 @@ byId("test-proxy").addEventListener("click", testDialogProxy);
 byId("proxy-cancel").addEventListener("click", closeProxyDialog);
 byId("proxy-close").addEventListener("click", closeProxyDialog);
 byId("proxy-dialog").addEventListener("close", cleanupProxyDialog);
+byId("add-proxy-group").addEventListener("click", () => openGroupDialog());
+byId("group-cancel").addEventListener("click", closeGroupDialog);
+byId("group-close").addEventListener("click", closeGroupDialog);
+byId("proxy-group-dialog").addEventListener("close", cleanupGroupDialog);
+byId("group-mode").addEventListener("change", syncGroupModeFields);
+byId("save-group").addEventListener("click", () => {
+  saveGroup();
+});
+byId("signin-group").addEventListener("change", () => renderSignInProxies());
 byId("proxy-form").addEventListener("input", () => {
   if (!dialogContext) return;
   dialogContext.lastTest = null;
