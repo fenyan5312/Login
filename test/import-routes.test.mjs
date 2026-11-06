@@ -87,6 +87,17 @@ test("the same key is refused as a duplicate once it is in the auth file", async
   expect(writes).toHaveLength(0);
 });
 
+test("an unreadable account index refuses the import instead of overwriting", async () => {
+  await writeFile(join(configDir, "plugin-auth.json"), '{"codex":');
+  writes.length = 0;
+  const response = await importCredential({ provider: "codex", text: KEY });
+  expect(response.status).toBe(503);
+  expect((await response.json()).error).toBe("auth_unreadable");
+  expect(writes).toHaveLength(0);
+  // Restore a readable index for the tests that follow.
+  await writeFile(join(configDir, "plugin-auth.json"), JSON.stringify({ codex: { type: "api", key: KEY } }));
+});
+
 test("an oauth credential keeps only the whitelisted fields", async () => {
   writes.length = 0;
   const response = await importCredential({
