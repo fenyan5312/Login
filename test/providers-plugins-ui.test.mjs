@@ -51,9 +51,9 @@ test("a provider with no runnable method still gets an add entry", () => {
   // and that dialog posts the provider it was opened for.
   expect(app).toContain("providerIsSubscription(provider)");
   expect(app).toContain("openProviderImport(provider)");
-  expect(app).toContain('"msg:import-credential"');
+  expect(app).toContain('"login:import-credential"');
   const imp = readFileSync(join(root, "ui", "import.js"), "utf8");
-  expect(imp).toContain('addEventListener("msg:import-credential"');
+  expect(imp).toContain('addEventListener("login:import-credential"');
   expect(imp).toContain("provider: activeProvider");
 });
 

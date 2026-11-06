@@ -72,7 +72,7 @@ test("the report routes are token-gated, allowlisted and credential-free", async
     expect(built.report.body).toContain("点添加账号之后没有反应");
     expect(built.report.body).not.toContain("should-not-appear");
     expect(built.report.body).not.toContain("ghp_should_not_appear");
-    expect(built.report.url.startsWith("https://github.com/fenyan5312/msg/issues/new?")).toBe(true);
+    expect(built.report.url.startsWith("https://github.com/fenyan5312/Login/issues/new?")).toBe(true);
     expect(built.report.url.length).toBeLessThanOrEqual(12000);
 
     // The launch route refuses anything that is not our issue form, and it

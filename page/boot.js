@@ -13,28 +13,28 @@
 (() => {
   const messages = {
     en: {
-      title: "msg",
+      title: "Login",
       connecting: "Connecting to the local service…",
       failed: "The local service did not answer.",
       retry: "Try again",
       remote: "This page's service runs only on the computer that runs magpie.",
     },
     "zh-Hans": {
-      title: "msg",
+      title: "Login",
       connecting: "正在连接本地服务…",
       failed: "本地服务没有响应。",
       retry: "重试",
       remote: "此页面的服务只在运行 magpie 的电脑上可用。",
     },
     "zh-Hant": {
-      title: "msg",
+      title: "Login",
       connecting: "正在連線至本機服務…",
       failed: "本機服務沒有回應。",
       retry: "重試",
       remote: "此頁面的服務只在執行 magpie 的電腦上可用。",
     },
     ja: {
-      title: "msg",
+      title: "Login",
       connecting: "ローカルサービスに接続しています…",
       failed: "ローカルサービスから応答がありません。",
       retry: "再試行",

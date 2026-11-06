@@ -2,7 +2,7 @@
 
 Every card in the providers grid carries one quiet control: **报告问题** (Report a
 problem). It exists because the honest states on those cards — `pending`,
-`blocked`, "this flow has not been verified in msg yet" — are exactly
+`blocked`, "this flow has not been verified in Login yet" — are exactly
 the ones a user hits first, and until now there was no way to tell us.
 
 The goal is that reporting costs a few clicks and no writing: the body is
@@ -34,7 +34,7 @@ cannot: hand a finished URL to the operating system.
 2. **The page cannot widen what gets launched.** `POST /api/report/open` is the
    only route that spawns anything, and it re-checks the URL against
    `isAllowedIssueUrl`: `https:`, host `github.com`, path
-   `/fenyan5312/msg/issues/new`, no userinfo. Everything else is a 400 and
+   `/fenyan5312/Login/issues/new`, no userinfo. Everything else is a 400 and
    nothing is spawned. The URL is passed as a single argv entry — never through
    a shell — so `&` in a query string cannot become another command.
 3. **Nothing is posted automatically.** The service opens the GitHub form with

@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const root = mkdtempSync(join(tmpdir(), "msg-import-"));
+const root = mkdtempSync(join(tmpdir(), "login-import-"));
 process.env.MAGPIE_CONFIG_DIR = root;
 
 const { ImportError, prepareImport } = await import("../lib/import-credential.mjs");
@@ -111,7 +111,7 @@ describe("prepareImport", () => {
     const fetchImpl = async () => ({
       ok: false,
       async text() {
-        return JSON.stringify({ code: 40001, msg: "token expired" });
+        return JSON.stringify({ code: 40001, Login: "token expired" });
       },
     });
     await expect(prepareImport(text, { fetchImpl })).rejects.toThrow(/token expired/);

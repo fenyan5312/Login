@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="clean-login-token" content="__CLEAN_LOGIN_TOKEN__">
-  <title>msg</title>
+  <title>Login</title>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" type="module"></script>
   <script src="import.js" type="module"></script>
@@ -17,7 +17,7 @@
     <header class="header">
       <img class="brand-icon" src="assets/icon.svg" alt="">
       <div class="brand-copy">
-        <h1 id="page-title">msg</h1>
+        <h1 id="page-title">Login</h1>
         <p id="page-subtitle">Proxy exits, isolated sign-ins, one account ledger.</p>
       </div>
       <div class="header-status" id="header-status">
@@ -26,7 +26,7 @@
       </div>
     </header>
 
-    <nav class="tabs" role="tablist" aria-label="msg">
+    <nav class="tabs" role="tablist" aria-label="Login">
       <button class="tab is-active" id="tab-providers" type="button" role="tab"
         aria-selected="true" aria-controls="panel-providers">
         <span id="tab-providers-label">Providers</span>
@@ -57,7 +57,7 @@
             <h3 id="environment-title">Login browser setup</h3>
             <span class="setup-badge" id="environment-badge">Not installed</span>
           </div>
-          <p class="setup-copy" id="environment-copy">msg needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.</p>
+          <p class="setup-copy" id="environment-copy">Login needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.</p>
           <dl class="setup-facts">
             <div>
               <dt id="environment-size-label">Download</dt>
@@ -180,7 +180,7 @@
         <div class="section-head">
           <div>
             <h2 id="accounts-title">Accounts</h2>
-            <p id="accounts-copy">Every account used with msg, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.</p>
+            <p id="accounts-copy">Every account used with Login, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.</p>
           </div>
           <div class="section-actions">
             <button class="button" id="import-credential" type="button">导入凭据</button>
@@ -242,7 +242,7 @@
         <div class="empty" id="accounts-empty" hidden>
           <img src="assets/icon.svg" alt="">
           <strong id="accounts-empty-title">No accounts yet</strong>
-          <p id="accounts-empty-copy">Accounts appear here after a sign-in through msg.</p>
+          <p id="accounts-empty-copy">Accounts appear here after a sign-in through Login.</p>
         </div>
       </section>
     </main>
@@ -253,6 +253,7 @@
         <span id="service-label">Connecting…</span>
       </span>
       <span class="footer-meta">
+        <span class="footer-author" title="作者微信">by 筱玖could · WeChat xiao9-c</span>
         <span id="version"></span>
         <button class="link" id="retry" type="button" hidden>Retry</button>
       </span>

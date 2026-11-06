@@ -1,8 +1,9 @@
 {
-  "name": "msg",
-  "version": "1.1.0",
-  "description": "msg — proxy exits, isolated-browser sign-ins, account ledger and WorkBuddy credential import in one magpie plugin.",
+  "name": "login",
+  "version": "1.1.1",
+  "description": "Login — proxy exits, isolated-browser sign-ins, account ledger and WorkBuddy credential import in one magpie plugin.",
   "license": "MIT",
+  "author": "筱玖could (微信: xiao9-c)",
   "type": "module",
   "main": "./index.mjs",
   "files": [
@@ -26,10 +27,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fenyan5312/msg.git"
+    "url": "git+https://github.com/fenyan5312/Login.git"
   },
   "bugs": {
-    "url": "https://github.com/fenyan5312/msg/issues"
+    "url": "https://github.com/fenyan5312/Login/issues"
   },
   "engines": {
     "bun": ">=1.4.2"
@@ -40,13 +41,13 @@
     "playwright-core": "1.62.0"
   },
   "magpie": {
-    "icon": "https://raw.githubusercontent.com/fenyan5312/msg/main/assets/icon.svg",
+    "icon": "https://raw.githubusercontent.com/fenyan5312/Login/main/assets/icon.svg",
     "page": {
-      "title": "msg",
+      "title": "Login",
       "titles": {
-        "zh": "msg",
-        "zh-TW": "msg",
-        "ja": "msg"
+        "zh": "Login",
+        "zh-TW": "Login",
+        "ja": "Login"
       },
       "file": "page/index.html",
       "icon": "assets/icon.svg",

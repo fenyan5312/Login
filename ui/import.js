@@ -11,7 +11,7 @@ const messages = {
   en: {
     open: "Import credential",
     title: "Import a credential",
-    copy: "Paste a credential for {name}. msg reads it locally, writes it into magpie, and the Accounts tab shows it.",
+    copy: "Paste a credential for {name}. Login reads it locally, writes it into magpie, and the Accounts tab shows it.",
     label: "Credential",
     hint: "An API key, an access token, JSON, a Cookie or request headers, or key=value pairs all work. The kind is detected automatically; field names are read in camelCase and snake_case.",
     kind: "Sign-in / API key",
@@ -27,7 +27,7 @@ const messages = {
   "zh-Hans": {
     open: "导入凭据",
     title: "导入凭据",
-    copy: "粘贴 {name} 的凭据。msg 在本地解析后写入 magpie，账号列表里就能看到。",
+    copy: "粘贴 {name} 的凭据。Login 在本地解析后写入 magpie，账号列表里就能看到。",
     label: "凭据",
     hint: "支持 API key、access token、JSON、Cookie / 请求头、key=value。类型会自动识别，字段大小写与驼峰 / 下划线都认。",
     kind: "登录凭据 / API key",
@@ -43,7 +43,7 @@ const messages = {
   "zh-Hant": {
     open: "匯入憑據",
     title: "匯入憑據",
-    copy: "貼上 {name} 的憑據。msg 在本機解析後寫入 magpie，帳號列表裡就能看到。",
+    copy: "貼上 {name} 的憑據。Login 在本機解析後寫入 magpie，帳號列表裡就能看到。",
     label: "憑據",
     hint: "支援 API key、access token、JSON、Cookie / 請求標頭、key=value。類型會自動辨識，欄位大小寫與駝峰 / 底線都認。",
     kind: "登入憑據 / API key",
@@ -59,7 +59,7 @@ const messages = {
   ja: {
     open: "認証情報をインポート",
     title: "認証情報をインポート",
-    copy: "{name} の認証情報を貼り付けます。msg がローカルで読み取り、magpie に書き込むとアカウント一覧に表示されます。",
+    copy: "{name} の認証情報を貼り付けます。Login がローカルで読み取り、magpie に書き込むとアカウント一覧に表示されます。",
     label: "認証情報",
     hint: "API key、access token、JSON、Cookie / リクエストヘッダー、key=value に対応。種類は自動判別し、camelCase と snake_case の両方を読みます。",
     kind: "ログイン / API key",
@@ -236,7 +236,7 @@ async function run() {
 byId("import-credential")?.addEventListener("click", () => openDialog());
 // A provider card without a runnable plugin method asks for the same dialog,
 // scoped to its own provider id. It carries only the id and the display name.
-window.addEventListener("msg:import-credential", (event) => {
+window.addEventListener("login:import-credential", (event) => {
   const detail = event?.detail;
   openDialog({ provider: detail?.provider, name: detail?.name });
 });

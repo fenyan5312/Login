@@ -42,7 +42,7 @@ export const __testing = {
 // host still owns the port until it exits, and awaiting the bind here used up
 // magpie's load budget and made the plugin look like it never loaded.
 export default {
-  id: "magpie-msg",
+  id: "magpie-login",
   server: async (input = {}, options = {}) => {
     starting ??= startServer({
       port: portOf(options),
@@ -53,19 +53,19 @@ export default {
     })
       .then((started) => {
         service = started;
-        console.log(`[msg] page listening on http://127.0.0.1:${started.port}`);
+        console.log(`[login] page listening on http://127.0.0.1:${started.port}`);
         return started;
       })
       .catch((error) => {
         starting = undefined;
-        console.error(`[msg] page service failed to start: ${String(error?.message ?? error)}`);
+        console.error(`[login] page service failed to start: ${String(error?.message ?? error)}`);
         return null;
       });
 
     try {
       return await workbuddyAuthHooks(input);
     } catch (error) {
-      console.error(`[msg] WorkBuddy methods unavailable: ${String(error?.message ?? error)}`);
+      console.error(`[login] WorkBuddy methods unavailable: ${String(error?.message ?? error)}`);
       return {};
     }
   },

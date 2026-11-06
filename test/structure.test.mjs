@@ -6,7 +6,7 @@ const root = join(import.meta.dir, "..");
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 
 test("uses the community page package shape", () => {
-  expect(pkg.name).toBe("msg");
+  expect(pkg.name).toBe("login");
   expect(pkg.license).toBe("MIT");
   expect(pkg.type).toBe("module");
   // A page plugin that runs a host service MUST name an entry file.
@@ -52,8 +52,8 @@ test("ships every file the manifest names", () => {
 test("declares a standalone repository the topic channel can find", () => {
   expect(pkg.license).toBe("MIT");
   expect(pkg.repository.type).toBe("git");
-  expect(pkg.repository.url).toBe("git+https://github.com/fenyan5312/msg.git");
-  expect(pkg.bugs.url).toBe("https://github.com/fenyan5312/msg/issues");
+  expect(pkg.repository.url).toBe("git+https://github.com/fenyan5312/Login.git");
+  expect(pkg.bugs.url).toBe("https://github.com/fenyan5312/Login/issues");
   expect(pkg.keywords).toContain("magpie-plugin");
 });
 

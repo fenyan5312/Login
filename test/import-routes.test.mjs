@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { TOKEN_HEADER, startServer } from "../lib/server.mjs";
 
-const tmp = mkdtempSync(join(tmpdir(), "msg-import-routes-"));
+const tmp = mkdtempSync(join(tmpdir(), "login-import-routes-"));
 const dataDir = join(tmp, "data");
 const configDir = join(tmp, "magpie-config");
 const KEY = "sk-generic-abcdefghijklmnop";

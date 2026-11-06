@@ -1708,6 +1708,8 @@ button { cursor: pointer; }
 .service-state[data-state="failed"] .dot { background: var(--down); }
 
 .footer-meta { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); }
+.footer-author { color: var(--ink-3); font-size: 11px; letter-spacing: .01em; white-space: nowrap; }
+@media (max-width: 640px) { .footer-author { display: none; } }
 
 .toasts {
   position: fixed;
