@@ -5,7 +5,7 @@
 // accepts an injected `scan`, so both are exercised entirely in-process.
 
 import { expect, test } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -193,13 +193,17 @@ function fakeExecFile(impl) {
   return fn;
 }
 
-test("scanMagpiePlugins runs the runtime with -e, a timeout and the resolved root", async () => {
+test("scanMagpiePlugins runs the runtime with -e, a timeout, a narrow env and the resolved root", async () => {
   const output = JSON.stringify({
     available: true,
     providers: [{ id: "cursor", package: "@x/cursor", methods: [{ type: "oauth", label: "Cursor (browser)", hasAuthorize: true }] }],
   });
   const exec = fakeExecFile((_file, _args, _options, callback) => callback(null, `${output}\n`));
-  const scan = await scanMagpiePlugins({ env: { MAGPIE_CONFIG_DIR: join("/tmp", "magpie") }, execFile: exec, timeoutMs: 5000 });
+  const scan = await scanMagpiePlugins({
+    env: { MAGPIE_CONFIG_DIR: join("/tmp", "magpie"), SECRET_TOKEN: "must-not-reach-the-child", PATH: "/usr/bin" },
+    execFile: exec,
+    timeoutMs: 5000,
+  });
   expect(scan.available).toBe(true);
   expect(scan.providers[0].methods[0]).toEqual({
     type: "oauth",
@@ -217,15 +221,19 @@ test("scanMagpiePlugins runs the runtime with -e, a timeout and the resolved roo
   expect(call.options.timeout).toBe(5000);
   expect(call.options.killSignal).toBe("SIGKILL");
   expect(call.options.env.CLEAN_LOGIN_PLUGIN_ROOT).toBe(pluginRootDir({ MAGPIE_CONFIG_DIR: join("/tmp", "magpie") }));
-  // Defect 1 regression: the child must enumerate every scope under
-  // node_modules, never one hardcoded scope.
+  // Only the declared plugins are imported; the child never enumerates scopes
+  // wholesale, and it does not inherit the host's secrets.
   expect(call.args[1]).not.toContain("@magpie-community");
-  expect(call.args[1]).toContain("scopeDir");
+  expect(call.args[1]).toContain("dependencies");
+  expect(call.args[1]).toContain("PACKAGE_NAME");
+  expect(call.options.env.SECRET_TOKEN).toBeUndefined();
+  expect(call.options.env.PATH).toBe("/usr/bin");
 });
 
-test("scanMagpiePlugins finds providers in every scope under node_modules", async () => {
+test("scanMagpiePlugins finds providers in every scope magpie declares", async () => {
   const dir = mkdtempSync(join(tmpdir(), "clean-login-scan-"));
   try {
+    const declared = [];
     for (const [scope, pkg, id] of [
       ["@magpie-community", "pkg-a", "alpha"],
       ["@roadkid", "pkg-b", "loomy"],
@@ -237,7 +245,13 @@ test("scanMagpiePlugins finds providers in every scope under node_modules", asyn
         join(p, "index.mjs"),
         `export const F = async () => ({ auth: { provider: ${JSON.stringify(id)}, methods: [{ type: "oauth", label: "Sign in with ${id} PAT", authorize: async () => {} }] } });\n`,
       );
+      declared.push(`${scope}/${pkg}`);
     }
+    // magpie records installed plugins here; the scan imports only these.
+    writeFileSync(
+      join(dir, "plugins", "package.json"),
+      JSON.stringify({ name: "magpie-plugins", private: true, dependencies: Object.fromEntries(declared.map((name) => [name, "*"])) }),
+    );
     const scan = await scanMagpiePlugins({ env: { MAGPIE_CONFIG_DIR: dir }, timeoutMs: 8000 });
     expect(scan.available).toBe(true);
     expect(scan.providers.map((provider) => provider.id).sort()).toEqual(["alpha", "loomy"]);
@@ -251,6 +265,43 @@ test("scanMagpiePlugins finds providers in every scope under node_modules", asyn
       prompts: [],
       runnable: true,
     });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// Security regression: node_modules also holds ordinary transitive packages.
+// Importing an undeclared one would execute its import-time code with the
+// scan process's environment. Only the manifest's dependencies may run.
+test("an undeclared package under node_modules is never imported", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "clean-login-undeclared-"));
+  try {
+    const root = join(dir, "plugins", "node_modules");
+    const declared = join(root, "declared-auth");
+    mkdirSync(declared, { recursive: true });
+    writeFileSync(join(declared, "package.json"), JSON.stringify({ name: "declared-auth", type: "module", main: "./index.mjs" }));
+    writeFileSync(
+      join(declared, "index.mjs"),
+      `export const F = async () => ({ auth: { provider: "declared", methods: [] } });\n`,
+    );
+    const marker = join(dir, "undeclared-ran.txt");
+    const evil = join(root, "@scope", "undeclared-auth");
+    mkdirSync(evil, { recursive: true });
+    writeFileSync(join(evil, "package.json"), JSON.stringify({ name: "@scope/undeclared-auth", type: "module", main: "./index.mjs" }));
+    writeFileSync(
+      join(evil, "index.mjs"),
+      `import { writeFileSync } from "node:fs";
+writeFileSync(${JSON.stringify(marker)}, "ran");
+export const F = async () => ({ auth: { provider: "evil", methods: [] } });\n`,
+    );
+    writeFileSync(
+      join(dir, "plugins", "package.json"),
+      JSON.stringify({ name: "magpie-plugins", private: true, dependencies: { "declared-auth": "*" } }),
+    );
+    const scan = await scanMagpiePlugins({ env: { MAGPIE_CONFIG_DIR: dir }, timeoutMs: 8000 });
+    expect(scan.available).toBe(true);
+    expect(scan.providers.map((provider) => provider.id)).toEqual(["declared"]);
+    expect(() => statSync(marker)).toThrow();
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -280,7 +331,7 @@ test("a package without a name degrades to itself, never to a failed scan", asyn
     // A bundled build really ships a package.json without a name (for example
     // yaml/browser on the machine this bug was found on). Only the directory
     // name identifies it.
-    const nameless = join(root, "badpkg", "browser");
+    const nameless = join(root, "nameless-plugin");
     mkdirSync(nameless, { recursive: true });
     writeFileSync(join(nameless, "package.json"), JSON.stringify({ type: "module", main: "./index.mjs" }));
     writeFileSync(
@@ -299,6 +350,14 @@ test("a package without a name degrades to itself, never to a failed scan", asyn
       join(exploding, "index.mjs"),
       `export const F = async () => { throw new Error("factory exploded"); };\n`,
     );
+    writeFileSync(
+      join(dir, "plugins", "package.json"),
+      JSON.stringify({
+        name: "magpie-plugins",
+        private: true,
+        dependencies: { "@scope/good-auth": "*", "nameless-plugin": "*", "@scope/exploding": "*" },
+      }),
+    );
 
     const scan = await scanMagpiePlugins({ env: { MAGPIE_CONFIG_DIR: dir }, timeoutMs: 15000 });
     expect(scan.available).toBe(true);
@@ -307,7 +366,7 @@ test("a package without a name degrades to itself, never to a failed scan", asyn
     expect(scan.error).toBeUndefined();
     expect(scan.providers.map((provider) => provider.id).sort()).toEqual(["good", "nameless"]);
     // The nameless package falls back to its directory name, not to a crash.
-    expect(scan.providers.find((provider) => provider.id === "nameless").package).toBe("browser");
+    expect(scan.providers.find((provider) => provider.id === "nameless").package).toBe("nameless-plugin");
     // The good provider keeps its browser method, which is what makes a card
     // signable again.
     const goodScan = scan.providers.find((provider) => provider.id === "good");

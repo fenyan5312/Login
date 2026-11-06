@@ -342,3 +342,17 @@ test("vendor ids from community auth plugins line up with the local cards", () =
   expect(view.providers.some((provider) => provider.id === "openai")).toBe(false);
   expect(view.counts.pluginOnly).toBe(0);
 });
+
+// Regression: alias lookup used to read `PROVIDER_ALIASES[id]` directly, so a
+// provider id that names an Object.prototype member ("constructor") returned a
+// function and the page request failed. A prototype key is just an unknown id.
+test("a provider id that collides with Object.prototype is handled as an id", () => {
+  const view = mergeProviderSources({ local: LOCAL, magpie: ["constructor"], plugins: { available: true, providers: [] } });
+  expect(view.providers.some((provider) => provider.id === "constructor")).toBe(true);
+  // Other prototype members are normalized by the slug, but must never throw.
+  for (const id of ["toString", "hasOwnProperty", "__proto__"]) {
+    expect(() =>
+      mergeProviderSources({ local: LOCAL, magpie: [id], plugins: { available: true, providers: [] } }),
+    ).not.toThrow();
+  }
+});

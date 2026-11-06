@@ -146,4 +146,11 @@ describe("prepareGenericImport", () => {
     );
     expect(prepared.body.expires).toBe(2_000_000_000_000);
   });
+
+  // A pasted blob can wrap its payload in thousands of `cookie=` / `headers=`
+  // prefixes. The parser must answer "no secret here", not overflow the stack.
+  test("deeply nested wrapper prefixes are bounded, not a stack overflow", () => {
+    const nested = `${"cookie=".repeat(5000)}access_token=${ACCESS}`;
+    fails(() => prepareGenericImport(nested, { provider: "codex" }), "no_secret");
+  });
 });

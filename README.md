@@ -22,7 +22,7 @@ Every account gets its own browser profile, its own pinned fingerprint and the p
 - **Test an exit before you trust it.** A real connection through the proxy reports the exit IP, its region and the latency. No direct-connection fallback: if it fails, you see why.
 - **Trust score per exit.** Read the Claude IP trust score that page publishes, opened through that very proxy, and keep the number next to the row.
 - **Accounts keep their identity.** Signing an account out does not throw its browser identity away — signing back in reuses the same one.
-- **Everything stays on this computer.** Proxies, accounts and browser profiles live in your own magpie folder. Stored proxy passwords are never shown to the page and never written to a log. An imported credential exists in memory for the length of one request.
+- **Everything stays on this computer.** Proxies, accounts and browser profiles live in your own magpie folder. Stored proxy passwords are never shown to the page and never written to a log. A pasted credential is read once, written into magpie's own account store, and never copied to a file or log of Login's own.
 - **Four languages.** English, 简体中文, 繁體中文 and 日本語, following magpie's own language setting.
 - **A dark-glass UI.** Frosted panels with real backdrop blur, Mac-style pop-up menus that you can actually read, keyboard support and a light theme, all built on design tokens.
 
