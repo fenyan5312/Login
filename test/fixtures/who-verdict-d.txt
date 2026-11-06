@@ -1,0 +1,407 @@
+1
+1ms.dog
+网络透视
+网速与连通
+IP 与隐私
+选云与成本
+新工具上线抢先知道
+加入 TG 频道
+你是谁
+语言
+帮助
+79 个嗅探器 · 不弹任何授权
+网站眼中的你
+你多半是中国人，眼下人在Singapore, 新加坡。你平时说美国英语，电脑的时区是中国标准时间，钟用12 小时制。
+你手上这台是Windows 10/11 电脑，开的是Firefox 158，屏幕2560×1440 · 240 Hz，显卡是Radeon R9 200 Series（Firefox 给的同档替代型号，不是你的真实显卡），看不出是干什么用的。
+你经Black Mesa上网，分流了 4 个出口；替你查网址的 DNS 在中国。IP 说你在新加坡，可你的DNS还留在中国，一对就露馅。
+你习惯用深色模式，没装广告拦截。清掉 Cookie、开无痕都没用，网站靠指纹就能一直认出你。装的字体透露出：看不出什么。至于年龄，网站从这些猜不出。
+浏览器指纹 ID
+437fdcb4·36495d9f
+换网站、开无痕、开 VPN，它都不变
+第一次来。过段时间再来，看看它还认不认得你（只记在你的浏览器里）。
+伪装检测
+判断不对？
+4
+4 处可能暴露你
+评分 D
+想隐藏自己时，标黄和标红的地方就是网站会注意到的破绽。
+分享
+做一次完整体检
+✓
+时区与 IP
+都是 UTC+08:00
+i
+语言与 IP
+英语看不出你在哪
+✓
+系统语言与 IP
+没看出装了别的语言
+!
+DNS 泄露
+怎么修
+DNS 测试
+解析器在中国，IP 在新加坡
+!
+分流
+怎么修
+出口照妖镜
+本站和国内网站看到的出口不同
+!
+WebRTC 泄露
+怎么修
+出口照妖镜
+泄露了另一个地址：167.17.68.82
+i
+延迟与连接
+没有数据
+✓
+机房 IP
+普通网络：Black Mesa
+✓
+UA 与真实系统
+各处一致：Windows
+✓
+环境被篡改
+没发现被改过的痕迹
+!
+指纹可追踪
+怎么修
+稳定不变，网站能认出你
+✓
+自动化痕迹
+没有
+连接协议
+✓
+HTTP/3
+可用：UDP 443 能通
+!
+ECH
+怎么修
+未生效：Firefox 要开 DNS over HTTPS 才用 ECH
+✓
+后量子加密
+已启用（X25519MLKEM768）
+i
+WARP
+没用
+79 个嗅探器已完成
+复制文字
+模糊位置
+重新检测
+想装成在哪儿上网？
+目标地区
+想装成在新加坡，还差 4 项。
+✓
+IP 在新加坡
+✗
+系统时区在新加坡
+把系统时区改成新加坡的
+✗
+浏览器语言指向新加坡
+把浏览器首选语言改成新加坡的
+✗
+DNS 解析器在新加坡
+让 DNS 也走代理（fake-ip 或 TUN）
+✗
+WebRTC 不漏真实地址
+在浏览器或扩展里限制 WebRTC
+全部嗅探器和读到的结果
+这些信息任何网站都能读到，不会弹出授权提示。
+识别错了？
+服务器看到的
+15
+IP 地址
+134.195.100.26 · IPv4
+CF-Connecting-IP
+位置
+Singapore, 新加坡
+request.cf.city
+坐标
+1.29, 103.85 · 018989
+request.cf.latitude
+网络（ASN）
+AS46997 · Black Mesa Corporation
+request.cf.asOrganization
+DNS 解析器
+116.236.159.118 · China Telecom (Group)
+edns.ip-api.com
+IP 所在时区
+Asia/Singapore · UTC+08:00
+request.cf.timezone
+反向解析
+无
+DNS PTR
+最近的数据中心
+SIN
+request.cf.colo
+HTTP 和 TLS
+HTTP/2 · TLSv1.3 · AEAD-AES128-GCM-SHA256
+request.cf.tlsVersion
+密钥交换
+X25519MLKEM768 · 抗量子 · ECH 关
+/cdn-cgi/trace · kex, sni
+Cloudflare WARP
+WARP off · Gateway off
+/cdn-cgi/trace · warp
+TLS 指纹
+6c64b1739385 · 2371 B
+TLS ClientHello
+你的时钟
+准（差 230 毫秒）
+Date.now()
+WebRTC 地址
+134.195.100.26, 167.17.68.82
+RTCPeerConnection · STUN
+内网地址
+已隐藏（mDNS）
+WebRTC host candidate
+出口
+6
+完整检测
+国内网站
+101.87.80.173 · 中国 上海 上海 电信
+myip.ipip.net
+国外 IP 服务
+134.195.100.26 · Black Mesa Corporation
+api.ip.sb
+ChatGPT
+2604:86c0:200c:18ba:9a79:98b5:c953:a5a6 · LAX
+chatgpt.com/cdn-cgi/trace
+Claude
+2604:86c0:200c:18ba:9a79:98b5:c953:a5a6 · LAX
+claude.ai/cdn-cgi/trace
+Cloudflare
+134.195.100.26 · SIN
+www.cloudflare.com/cdn-cgi/trace
+IPv4 和 IPv6
+IPv4 134.195.100.26 · IPv6 2406:4440:20:1c::a
+IPv6 测试
+Cloudflare Radar · IPv4 / IPv6
+请求头
+7
+User-Agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:158.0) Gecko/20100101 Firefox/158.0
+User-Agent
+语言
+en-US,en;q=0.9
+Accept-Language
+浏览器品牌
+没有发送
+Sec-CH-UA
+平台
+没有发送
+Sec-CH-UA-Platform
+压缩方式
+gzip, br
+Accept-Encoding
+请勿追踪
+没有发送
+DNT · Sec-GPC
+从哪里来
+没有发送
+Referer · document.referrer
+语言和地区
+8
+浏览器语言
+en-US, en
+navigator.languages
+区域设置
+en-US · gregory · latn
+Intl.DateTimeFormat
+系统时区
+Asia/Shanghai · UTC+08:00
+Intl …timeZone
+时钟格式
+12 小时制 · 3:40 AM
+Intl …hourCycle
+每周第一天
+星期日
+Intl.Locale weekInfo
+数字和日期格式
+1,234,567.89 · 11/3/2026
+Intl.NumberFormat
+键盘布局
+这个浏览器不提供
+navigator.keyboard
+语音朗读
+没有发送
+speechSynthesis
+指纹
+7
+JS 引擎
+SpiderMonkey · Firefox
+Error.message
+Canvas
+c9908311·bc7f0903
+canvas.toDataURL
+WebGL
+0bd94af4·86a8bd43
+WebGL getParameter
+音频
+fced6df4·4150e5f9
+OfflineAudioContext
+字体列表
+cd44ab3d·1a329bd4
+fonts → SHA-256
+综合指纹
+437fdcb4·36495d9f
+SHA-256
+防指纹
+关：两次完全相同
+canvas × 2
+设备
+22
+操作系统
+Windows 10/11
+userAgentData
+浏览器
+Firefox 158
+userAgentData.brands
+CPU 架构
+Win32
+…architecture · bitness
+屏幕
+2560×1440 · 1 倍 · 24 位色
+screen · devicePixelRatio
+刷新率
+240 Hz
+requestAnimationFrame
+显示器
+这个浏览器不提供 · 窗口在 0, 0
+screen.isExtended · screenX
+窗口
+2560×1307 · 系统栏占 48 px
+innerWidth · availHeight
+显卡
+Radeon R9 200 Series（Firefox 给的同档替代型号，不是你的真实显卡）
+WebGL RENDERER
+WebGPU
+无
+navigator.gpu adapter.info
+WebGL 能力
+WebGL 2 · 最大纹理 16384 · 29 个扩展
+WebGL2 · MAX_TEXTURE_SIZE
+CPU 线程
+16 线程
+hardwareConcurrency
+内存
+这个浏览器不提供
+navigator.deviceMemory
+触控和指针
+5 个触点 · 鼠标或触控板
+maxTouchPoints · pointer
+电池
+这个浏览器不提供
+navigator.getBattery
+网络连接
+这个浏览器不提供
+navigator.connection
+摄像头和麦克风
+摄像头 1 · 麦克风 1 · 扬声器 0
+enumerateDevices
+音频硬件
+48 kHz · 2 声道
+AudioContext.sampleRate
+生物识别
+否
+PublicKeyCredential
+蓝牙
+这个浏览器不提供
+bluetooth.getAvailability
+视频解码
+H.264 · VP9 · AV1 · HEVC
+MediaSource.isTypeSupported
+DRM
+这个浏览器不提供
+requestMediaKeySystemAccess
+存储配额
+本站可用 11 GB
+storage.estimate
+浏览器设置
+14
+配色
+深色
+prefers-color-scheme
+动画
+没有要求
+prefers-reduced-motion
+屏幕色彩
+sRGB · SDR
+color-gamut · dynamic-range
+辅助功能
+没有特别设置
+prefers-contrast · forced-colors
+打开方式
+浏览器标签页
+display-mode
+隐私信号
+DNT 关 · GPC 关
+doNotTrack · GPC
+Cookie
+开
+navigator.cookieEnabled
+权限
+定位 询问 · 通知 询问 · 摄像头 询问 · 麦克风 询问
+permissions.query
+PDF 阅读器
+是
+pdfViewerEnabled
+自动化
+否
+navigator.webdriver
+广告拦截
+没检测到
+bait element
+浏览器扩展
+没有可识别的
+window.ethereum · DOM marks
+标签页历史
+最近 0 次
+history.length
+已装字体
+46 个里有 18 个： Segoe UI, Calibri, Cambria, Consolas, Microsoft YaHei, SimSun, Microsoft JhengHei, Yu Gothic, MS Gothic, Malgun Gothic, Leelawadee UI, Nirmala UI, Comic Sans MS, Arial, Times New Roman, Courier New, Verdana, Georgia
+canvas measureText
+浏览器指纹检测
+DNS 泄露检测
+WebRTC 泄漏检测
+浏览器环境检测
+时区检测
+代理检测
+浏览器语言检测
+Canvas 指纹检测
+UA 检测
+浏览器扩展检测
+更多 1ms.dog 工具
+网络透视
+8 项网络检测一次跑完，一个等级，一个链接
+网速与连通
+1ms.dog
+出口 IP 与 40 个服务的延迟
+网速测试
+测下载、上传和延迟
+DNS 测试
+哪个 DNS 对你最快
+IPv6 测试
+我的网络支持 IPv6 吗
+CDN 雷达
+你连的是哪个 CDN 节点
+IP 与隐私
+出口照妖镜
+每个网站看到的出口 IP
+IP 质量测试
+IP 质量与纯净度
+ASN 查询
+IP 归属和 AS 号查询
+流媒体/AI 解锁检测
+你的 IP 能用哪些流媒体和 AI
+选云与成本
+Me2Cloud
+云厂商延迟测试
+Lightsail 省钱计算器
+AWS Lightsail 流量计算器
+云成本规划器
+服务器、存储、CDN 比价
+全部在你的浏览器里运行。无需账号，不收集测试结果。
+报告问题
+·
+© 2026 1ms.dog

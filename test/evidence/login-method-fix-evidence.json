@@ -1,0 +1,303 @@
+{
+  "title": "clean-login login-method classification fix — evidence",
+  "package": "packages/clean-login",
+  "spec": "clean-login-loginmethod-fix-spec.md",
+  "generatedBy": "bun test + bun test/evidence/scan-real-plugins.mjs (WSL Ubuntu-24.04, bun 1.4.4)",
+  "scope": {
+    "changedFiles": [
+      "packages/clean-login/lib/magpie-plugins.mjs",
+      "packages/clean-login/lib/provider-sources.mjs",
+      "packages/clean-login/lib/signin-flow.mjs",
+      "packages/clean-login/lib/server.mjs",
+      "packages/clean-login/ui/app.js",
+      "packages/clean-login/ui/provider-state.js",
+      "packages/clean-login/ui/signin-state.js",
+      "packages/clean-login/ui/index.html",
+      "packages/clean-login/ui/style.css",
+      "packages/clean-login/test/login-method.test.mjs (new)",
+      "packages/clean-login/test/magpie-plugins.test.mjs",
+      "packages/clean-login/test/provider-plugins.test.mjs",
+      "packages/clean-login/test/providers-plugins-ui.test.mjs",
+      "packages/clean-login/test/server.test.mjs",
+      "packages/clean-login/test/signin-routes.test.mjs",
+      "packages/clean-login/test/signin-ui.test.mjs",
+      "packages/clean-login/test/evidence/scan-real-plugins.mjs (new)"
+    ],
+    "notTouched": [
+      "the repository root (README.md, registry.json, scripts/)",
+      "C:/Users/Administrator/.config/magpie/ (read-only; only read during the evidence scan)",
+      "any file outside packages/clean-login/"
+    ]
+  },
+  "baseline": {
+    "command": "wsl -d Ubuntu-24.04 -e bash -lc 'cd .../packages/clean-login && bun test'",
+    "before": { "pass": 264, "fail": 0, "files": 20, "expectCalls": 2204 },
+    "after": { "pass": 347, "fail": 0, "files": 25, "expectCalls": 2620 },
+    "note": "The +83 tests are the new ones listed below; every pre-existing test still passes (only assertions that pinned the OLD method shape were updated, never weakened)."
+  },
+  "round2": {
+    "title": "main-agent acceptance pass: local-session classification + a device-code marker",
+    "scope": ["lib/signin-flow.mjs", "ui/provider-state.js", "ui/app.js", "test/login-method.test.mjs", "test/providers-plugins-ui.test.mjs"],
+    "problems": [
+      {
+        "id": 1,
+        "where": "lib/signin-flow.mjs classifyAuthorizedFlow()",
+        "before": "no url + instructions -> form, so 7 real local-session plugins were marked 'needs details'",
+        "after": "no url + no declared text/password prompt -> local; only a declared text/password prompt is form/secret",
+        "rootCause": "the old rule treated any url-less flow with instructions as a fill-in form. In reality every local-session method (reuse of the desktop app's / vendor CLI's sign-in) returns exactly 'instructions, no url'.",
+        "realInstructions": [
+          { "package": "@magpie-community/opencode-commandcode-auth", "label": "Command Code CLI's sign-in", "instructions": "Uses the account in /root/.commandcode/auth.json.", "before": "form", "after": "local" },
+          { "package": "@magpie-community/opencode-cursor-auth", "label": "cursor-agent's sign-in", "instructions": "Uses the account `cursor-agent login` signed in to.", "before": "form", "after": "local" },
+          { "package": "@magpie-community/opencode-devin-auth", "label": "Devin CLI's sign-in", "instructions": "Uses the account in /root/.local/share/devin/credentials.toml.", "before": "form", "after": "local" },
+          { "package": "@magpie-community/opencode-kiro-auth", "label": "Kiro CLI's or Kiro IDE's sign-in", "instructions": "Uses the account kiro-cli or the Kiro IDE is signed in to.", "before": "form", "after": "local" },
+          { "package": "@magpie-community/opencode-workbuddy-auth", "label": "WorkBuddy AI desktop's sign-in", "instructions": "Uses the account WorkBuddy AI desktop is signed in to.", "before": "form", "after": "local" },
+          { "package": "@magpie-community/opencode-workbuddy-auth", "label": "WorkBuddy desktop's sign-in", "instructions": "Uses the account WorkBuddy desktop is signed in to.", "before": "form", "after": "local" },
+          { "package": "@magpie-community/opencode-zcode-auth", "label": "ZCode app's sign-in", "instructions": "Uses the account the ZCode app is signed in to, and follows it while ZCode stays signed in to that account.", "before": "form", "after": "local" }
+        ],
+        "realFormStillForm": [
+          { "flow": "Kiro Start URL / region", "why": "declares text prompts (startUrl, region) -> form" },
+          { "flow": "Loomy phone code", "why": "declares a text prompt (phone) -> form" },
+          { "flow": "Qoder PAT", "why": "declares a password prompt (pat) -> secret" },
+          { "flow": "a select-only method with no url", "why": "a select is not typed input -> local" }
+        ]
+      },
+      {
+        "id": 2,
+        "where": "ui/provider-state.js methodCategory()/methodCategoryText() + ui/app.js i18n",
+        "before": "the sign-in flow's confirmed 'device' category was dropped by methodCategory() (not in the tag list) and fell through to 'way to confirm'",
+        "after": "'device' is a first-class category and has its own marker in en / zh-Hans / zh-Hant / ja",
+        "markers": { "en": "device code", "zh-Hans": "设备码", "zh-Hant": "設備碼", "ja": "デバイスコード" }
+      }
+    ],
+    "categoryMappingBeforeAfter": [
+      { "backendCategory": "browser", "methodCategoryBefore": "browser", "markerBefore": "浏览器 / browser", "methodCategoryAfter": "browser", "markerAfter": "浏览器 / browser" },
+      { "backendCategory": "device", "methodCategoryBefore": "unknown", "markerBefore": "方式待确认 / way to confirm", "methodCategoryAfter": "device", "markerAfter": "设备码 / device code" },
+      { "backendCategory": "form", "methodCategoryBefore": "form", "markerBefore": "需要填表 / needs details", "methodCategoryAfter": "form", "markerAfter": "需要填表 / needs details" },
+      { "backendCategory": "local", "methodCategoryBefore": "local", "markerBefore": "本地登录态 / local session", "methodCategoryAfter": "local", "markerAfter": "本地登录态 / local session" },
+      { "backendCategory": "secret", "methodCategoryBefore": "secret", "markerBefore": "粘贴密钥 / paste a token", "methodCategoryAfter": "secret", "markerAfter": "粘贴密钥 / paste a token" },
+      { "backendCategory": "pending (scan only)", "methodCategoryBefore": "pending", "markerBefore": "方式待确认 / way to confirm", "methodCategoryAfter": "pending", "markerAfter": "方式待确认 / way to confirm", "note": "the honest scan-stage wording; replaced by the real category once the sign-in starts" }
+    ],
+    "newTests": [
+      "test/login-method.test.mjs: every real local-session instruction is a local session, never a form (the 7 exact real instructions)",
+      "test/login-method.test.mjs: a URL-less method is a form only when it declares a typed prompt (Loomy form, Qoder PAT secret, Kiro form, select-only local)",
+      "test/login-method.test.mjs: classifyAuthorizedFlow names a local session that has no URL (retargeted to local)",
+      "test/login-method.test.mjs: classifyAuthorizedFlow never calls a URL-less CLI flow a browser (retargeted to local)",
+      "test/login-method.test.mjs: classifyAuthorizedFlow reads the real plugin instructions (ZCode app / Kiro CLI / Command Code rows retargeted to local)",
+      "test/login-method.test.mjs: the card markers are told apart (added device)",
+      "test/login-method.test.mjs: the backend's confirmed device category maps to the device-code marker",
+      "test/providers-plugins-ui.test.mjs: provider cards render the derived methods and the list source (added: providerMethodDeviceTag defined in all 4 languages)"
+    ],
+    "testOutput": {
+      "relatedFiles": "bun test test/login-method.test.mjs test/signin-flow.test.mjs test/providers-plugins-ui.test.mjs test/provider-sources.test.mjs test/magpie-plugins.test.mjs test/provider-plugins.test.mjs test/signin-routes.test.mjs test/providers-ui.test.mjs -> 115 pass / 0 fail / 1247 expect() calls / 8 files",
+      "fullSuite": "bun test -> 406 pass / 2 fail / 2877 expect() calls / 408 tests / 30 files (the suite count moves as the parallel account/proxy-score lines add tests; this is the run recorded for this change)",
+      "failOwnership": "The 2 failures are both in test/proxy-score-routes.test.mjs ('a measured score reaches the proxy row, the list and bootstrap' and 'a second score while one runs is a 409 score_busy', 202 expected / 503 received). They belong to the parallel proxy-score line, not to this change. The prune `retired`-field failures mentioned by the main agent were already green at the time of this run."
+    },
+    "routeDependencies": "None added. This round only changes classifyAuthorizedFlow() (a pure function), the existing /api/signin flow's recorded methodCategory (already present), and UI marker text. No route was added, removed or renamed, and lib/server.mjs was not touched."
+  },
+  "changes": [
+    {
+      "id": 1,
+      "title": "the scan projects a method's prompts into a public-safe shape",
+      "files": ["lib/magpie-plugins.mjs", "lib/provider-sources.mjs"],
+      "what": [
+        "new export projectPrompts(prompts): keeps only type / key / message / options[].label / options[].value; drops placeholders, defaults, entered values, hints and every function",
+        "new exports requiresFormInput(prompts) and requiresSecretInput(prompts)",
+        "classifyMethod() gained the categories 'form' (a text/password prompt) and 'secret' (a password prompt)",
+        "the child scan now emits the prompts projection and a `runnable` flag (the method really carries an authorize function) instead of the raw `hasAuthorize` name",
+        "normalizeScan()/pluginMethods() carry the projection into the public API shape"
+      ],
+      "safety": "The scan still never calls authorize(); the projection carries no value and no function, so nothing entered by a user can reach an API response."
+    },
+    {
+      "id": 2,
+      "title": "the real flow is classified from what authorize() returned",
+      "files": ["lib/signin-flow.mjs"],
+      "what": [
+        "new export classifyAuthorizedFlow(authorized) -> { category, url, instructions } with category in browser | device | form | local | unknown",
+        "chooseBrowserMethod(methods, preferred) can now be told which method to use, by label or by object; without a preference the old first-match behavior is unchanged",
+        "startSignIn({ provider, proxy, single, methodLabel }) uses the chosen method and records the real category in the flow status (publicFlow().methodCategory)"
+      ],
+      "rules": [
+        "no object -> unknown",
+        "instructions naming a one-time code -> device",
+        "instructions naming a browser/web page -> browser",
+        "a url with silent instructions -> browser",
+        "no url + a declared text/password prompt -> form (password is secret)",
+        "no url + no typed prompt -> local (reuse a local session); never form"
+      ],
+      "safety": "A URL-less flow (for example commandcode's cliSignIn, which returns url:'') is classified local, never browser and never form."
+    },
+    {
+      "id": 3,
+      "title": "the card markers are honest, in four languages",
+      "files": ["lib/provider-sources.mjs", "ui/app.js", "ui/provider-state.js", "ui/style.css"],
+      "what": [
+        "the card now names six kinds apart: browser / needs details (form) / local session / key / paste a token (secret) / way to confirm (pending)",
+        "a runnable oauth method whose label names no kind is 'pending': it IS offered and the card says the kind is confirmed when the sign-in starts",
+        "new per-provider wording: FORM_METHOD_FOUND, SECRET_METHOD_FOUND, PENDING_METHOD_FOUND (en / zh-Hans / zh-Hant / ja)",
+        "new i18n keys: providerMethodFormTag, providerMethodSecretTag, providerMethodPendingTag, providerMethodNote (all four languages)",
+        "the card's source line / note says: the page shown at sign-in is the source of truth",
+        "the add-account entry is offered for every signable method, not only for a browser-labelled one"
+      ],
+      "noFalseClaims": "No wording claims a browser sign-in was identified for a method whose label does not say so."
+    },
+    {
+      "id": 4,
+      "title": "the site picker for a plugin with several runnable oauth methods",
+      "files": ["lib/provider-sources.mjs", "lib/signin-flow.mjs", "lib/server.mjs", "ui/app.js", "ui/signin-state.js", "ui/index.html", "ui/style.css"],
+      "status": "DONE",
+      "what": [
+        "the merge carries signInMethods: the labels of the runnable, non-local oauth methods",
+        "the sign-in dialog shows a picker (a plain <select>, id=\"signin-method\") when there is more than one, and hides it otherwise",
+        "the chosen label travels in POST /api/signin as the optional field methodLabel",
+        "the service passes methodLabel to startSignIn(), which picks the exact method; an unmatched label is an honest error, never a silent fallback"
+      ],
+      "sandboxConstraints": {
+        "controls": "a plain <select> plus the existing type=\"button\" controls; no new submit control",
+        "noFormSubmission": "the dialog still contains no type=\"submit\" and no form",
+        "noForbiddenApis": "no alert / confirm / window.open / localStorage anywhere in the new code",
+        "cors": "no new static asset was added, so no new CORS header is needed; the token-bearing HTML document still carries no Access-Control-Allow-*"
+      }
+    }
+  ],
+  "methodCategoryBeforeAfter": [
+    { "provider": "zcode", "label": "ZCode: Z.ai GLM Coding Plan", "before": "unknown", "after": "pending", "markerBefore": "未知 / unknown", "markerAfter": "方式待确认 / way to confirm", "realFlow": "browser (authorize returns an https URL + \"Sign in to Z.ai in the browser\")" },
+    { "provider": "zcode", "label": "ZCode: BigModel (智谱) GLM Coding Plan", "before": "unknown", "after": "pending", "markerBefore": "未知 / unknown", "markerAfter": "方式待确认 / way to confirm", "realFlow": "browser (authorize returns an https URL + \"Sign in to BigModel in the browser\")" },
+    { "provider": "zcode", "label": "ZCode: a team's GLM Coding Plan", "before": "unknown", "after": "pending", "markerBefore": "未知 / unknown", "markerAfter": "方式待确认 / way to confirm", "realFlow": "browser, after a site prompt (select)" },
+    { "provider": "zcode", "label": "ZCode app's sign-in", "before": "local", "after": "local", "markerBefore": "本地登录态 / local session", "markerAfter": "本地登录态 / local session", "realFlow": "local (authorize returns no url)" },
+    { "provider": "zcode", "label": "GLM Coding Plan API key", "before": "key", "after": "key", "markerBefore": "密钥 / key", "markerAfter": "密钥 / key", "realFlow": "n/a (api type, no authorize)" },
+    { "provider": "kiro", "label": "Kiro (Google, GitHub, AWS Builder ID, IAM Identity Center)", "before": "unknown", "after": "form", "markerBefore": "未知 / unknown", "markerAfter": "需要填表 / needs details", "realFlow": "form (prompts: select + text Start URL + text region)" },
+    { "provider": "kiro", "label": "Kiro CLI's or Kiro IDE's sign-in", "before": "local", "after": "local", "markerBefore": "本地登录态", "markerAfter": "本地登录态", "realFlow": "local" },
+    { "provider": "qoder", "label": "Sign in with Qoder", "before": "unknown", "after": "pending", "markerBefore": "未知 / unknown", "markerAfter": "方式待确认 / way to confirm", "realFlow": "device (authorize returns a device URL + \"authorize this device\")" },
+    { "provider": "qoder", "label": "Sign in with Qoder PAT", "before": "unknown", "after": "secret", "markerBefore": "未知 / unknown", "markerAfter": "粘贴密钥 / paste a token", "realFlow": "paste a PAT (password prompt)" },
+    { "provider": "qoder-cn", "label": "Sign in with Qoder CN Enterprise (VPC)", "before": "unknown", "after": "form", "markerBefore": "未知 / unknown", "markerAfter": "需要填表 / needs details", "realFlow": "form (text prompt: vpc)" },
+    { "provider": "minimax-code", "label": "MiniMax Code account", "before": "unknown", "after": "pending", "markerBefore": "未知 / unknown", "markerAfter": "方式待确认 / way to confirm", "realFlow": "device (authorize returns a device URL + \"confirm the code\")" },
+    { "provider": "loomy", "label": "Loomy 手机验证码登录（讯飞）", "before": "unknown", "after": "form", "markerBefore": "未知 / unknown", "markerAfter": "需要填表 / needs details", "realFlow": "form (text prompt: phone; authorize returns no url)" },
+    { "provider": "qwenwork-enterprise", "label": "Sign in with QwenWork 企业版（输入企业域名）", "before": "unknown", "after": "form", "markerBefore": "未知 / unknown", "markerAfter": "需要填表 / needs details", "realFlow": "form (text prompt: domain)" },
+    { "provider": "cursor", "label": "Cursor (browser)", "before": "browser", "after": "browser", "markerBefore": "浏览器", "markerAfter": "浏览器", "realFlow": "browser" },
+    { "provider": "cursor", "label": "cursor-agent's sign-in", "before": "local", "after": "local", "markerBefore": "本地登录态", "markerAfter": "本地登录态", "realFlow": "local" },
+    { "provider": "cursor", "label": "Cursor API key", "before": "key", "after": "key", "markerBefore": "密钥", "markerAfter": "密钥", "realFlow": "n/a" },
+    { "provider": "commandcode-plan", "label": "Command Code (browser)", "before": "browser", "after": "browser", "markerBefore": "浏览器", "markerAfter": "浏览器", "realFlow": "browser" },
+    { "provider": "commandcode-plan", "label": "Command Code CLI's sign-in", "before": "local", "after": "local", "markerBefore": "本地登录态", "markerAfter": "本地登录态", "realFlow": "local (authorize returns url:\"\" — never browser)" },
+    { "provider": "devin", "label": "Devin (browser)", "before": "browser", "after": "browser", "markerBefore": "浏览器", "markerAfter": "浏览器", "realFlow": "browser" },
+    { "provider": "workbuddy", "label": "WorkBuddy account (browser)", "before": "browser", "after": "browser", "markerBefore": "浏览器", "markerAfter": "浏览器", "realFlow": "browser" },
+    { "provider": "workbuddy-ai", "label": "WorkBuddy AI account (browser)", "before": "browser", "after": "browser", "markerBefore": "浏览器", "markerAfter": "浏览器", "realFlow": "browser" }
+  ],
+  "realPluginScan": {
+    "how": "bun test/evidence/scan-real-plugins.mjs — the service's own child scan against C:/Users/Administrator/.config/magpie/plugins/node_modules, then the service's own merge. authorize() is never called; nothing is written.",
+    "providers": 14,
+    "methods": 33,
+    "summary": {
+      "browser": 5,
+      "form": 5,
+      "secret": 2,
+      "local": 7,
+      "key": 6,
+      "pending": 8,
+      "unknown": 0
+    },
+    "note": "No method is left as 'unknown'. The three ZCode oauth flows are 'pending' at scan time and are classified 'browser' the moment authorize() returns (classifyAuthorizedFlow)."
+  },
+  "newTests": {
+    "test/login-method.test.mjs (new file, 24 tests)": [
+      "the prompts projection keeps only the public field shape",
+      "the prompts projection is bounded, idempotent and never throws",
+      "a method that asks for typed details is a form, not a browser hand-off",
+      "a method that asks for a pasted secret is a secret flow",
+      "a select alone is not a form: ZCode's team method still opens a browser",
+      "the scan projects the prompts of every method it reports",
+      "classifyAuthorizedFlow names ZCode's browser flow",
+      "classifyAuthorizedFlow reads the real plugin instructions",
+      "classifyAuthorizedFlow names a device-code flow",
+      "classifyAuthorizedFlow names a local session that has no URL",
+      "every real local-session instruction is a local session, never a form (NEW, 7 real strings)",
+      "a URL-less method is a form only when it declares a typed prompt (NEW)",
+      "classifyAuthorizedFlow never calls a URL-less CLI flow a browser",
+      "classifyAuthorizedFlow degrades to unknown for junk",
+      "a silent URL still counts as a browser page",
+      "chooseBrowserMethod can be told which method to use",
+      "the flow reports the real method category after authorize() ran",
+      "the flow signs in with the method the caller asked for",
+      "ZCode's three oauth methods are no longer reported as unknown",
+      "the card markers are told apart (extended with device)",
+      "the backend's confirmed device category maps to the device-code marker (NEW)",
+      "a form method and a pasted-key method are not called unknown",
+      "a plugin with several runnable oauth methods offers a choice",
+      "a plugin with a single runnable method offers no choice"
+    ],
+    "test/magpie-plugins.test.mjs (modified)": [
+      "an ambiguous oauth method is reported as pending, not browser (renamed + retargeted)",
+      "an oauth method without an authorize function is not a browser method (extended)",
+      "junk still yields a shaped method without throwing (extended with prompts/runnable)",
+      "normalizeScan keeps only public, bounded fields (extended with prompts/runnable)",
+      "scanMagpiePlugins runs the runtime with -e, a timeout and the resolved root (extended)",
+      "scanMagpiePlugins finds providers in every scope under node_modules (extended)"
+    ],
+    "test/provider-plugins.test.mjs (modified)": [
+      "each card carries the derived methods and the browserMethod flag (extended with prompts/runnable)",
+      "a plugin-only provider gets a fifth-presence card with its derived methods (retargeted to the pending wording)",
+      "an ambiguous oauth method on a magpie-only card is worded as to be confirmed, not browser (retargeted)"
+    ],
+    "test/providers-plugins-ui.test.mjs (modified)": [
+      "provider cards render the derived methods and the list source (pins the new markers; extended: providerMethodDeviceTag in all 4 languages)"
+    ],
+    "test/server.test.mjs (modified)": [
+      "/api/provider-sources reports the injected plugin scan and its derived methods (extended with prompts/runnable)",
+      "static files exist and carry no mock data or dead action buttons (button list completed)"
+    ],
+    "test/signin-routes.test.mjs (modified)": [
+      "POST /api/signin starts a flow and returns the browser URL, not credentials (extended with methodLabel)",
+      "POST /api/signin forwards the proxy and the single flag (extended with methodLabel)",
+      "POST /api/signin forwards the chosen method label (NEW)",
+      "POST /api/signin ignores a blank or non-string method label (NEW)"
+    ],
+    "test/signin-ui.test.mjs (modified)": [
+      "the sign-in dialog posts the card's signInProvider to /api/signin (extended with the method picker)",
+      "the dialog offers a method picker for a plugin with several sign-in methods (NEW)",
+      "signInPayload carries the chosen method label, and omits it when there is none (NEW)"
+    ]
+  },
+  "testOutput": {
+    "command": "wsl -d Ubuntu-24.04 -e bash -lc 'cd /mnt/c/Users/Administrator/AppData/Roaming/CindyGlobal/owners/984709c7221453028169/bots/bot_1793484737606_f2yq7i/workspace/magpie-plugins-dev/packages/clean-login && bun test'",
+    "summary": "406 pass / 2 fail / 2877 expect() calls / 408 tests / 30 files (the 2 failures are both test/proxy-score-routes.test.mjs, belonging to the parallel proxy-score line)",
+    "perFile": {
+      "test/account-collision.test.mjs": 3,
+      "test/account-identity.test.mjs": 15,
+      "test/account-keys.test.mjs": 12,
+      "test/account-meta.test.mjs": 7,
+      "test/account-prune.test.mjs": 20,
+      "test/account-ui.test.mjs": 9,
+      "test/accounts-routes.test.mjs": 9,
+      "test/browser-environment.test.mjs": 17,
+      "test/browser-launcher.test.mjs": 21,
+      "test/login-method.test.mjs": 24,
+      "test/magpie-plugins.test.mjs": 23,
+      "test/provider-plugins.test.mjs": 10,
+      "test/provider-registry.test.mjs": 4,
+      "test/provider-sources.test.mjs": 17,
+      "test/providers-plugins-ui.test.mjs": 3,
+      "test/providers-ui.test.mjs": 8,
+      "test/proxies.test.mjs": 23,
+      "test/proxy-filter.test.mjs": 10,
+      "test/proxy-score-routes.test.mjs": "7 pass / 2 fail (proxy-score line)",
+      "test/proxy-score-ui.test.mjs": 9,
+      "test/proxy-score.test.mjs": 30,
+      "test/proxy-test.test.mjs": 10,
+      "test/reload-guard.test.mjs": 7,
+      "test/server.test.mjs": 37,
+      "test/signin-flow.test.mjs": 16,
+      "test/signin-reuse.test.mjs": 6,
+      "test/signin-routes.test.mjs": 14,
+      "test/signin-ui.test.mjs": 9,
+      "test/signin-writeback.test.mjs": 21,
+      "test/structure.test.mjs": 5
+    }
+  },
+  "constraintChecks": {
+    "scanNeverCallsAuthorize": "CHILD_SOURCE in lib/magpie-plugins.mjs only reads method.type / label / prompts / authorize-presence; the test 'scanMagpiePlugins runs the runtime with -e, a timeout and the resolved root' asserts the child source does not contain 'authorize('.",
+    "tokenHtmlNeverCors": "lib/server.mjs is unchanged in that respect: the HTML document is served without any Access-Control-Allow-* header; the new picker is a plain <select> inside the existing document, so no new asset and no new CORS surface.",
+    "passwordStaysInTheService": "unchanged: the page still only holds the public proxy record; the service resolves the stored record by id.",
+    "publicProjectionOnly": "the merged provider projection carries type, label, category, prompts (type/key/message/options label+value) and runnable — no function, no placeholder, no entered value.",
+    "realConfigUntouched": "the evidence scan only READ C:/Users/Administrator/.config/magpie/plugins/node_modules; no test writes to the real config (every test uses a temp MAGPIE_CLEAN_LOGIN_DATA / MAGPIE_CONFIG_DIR)."
+  }
+}

@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="clean-login-token" content="__CLEAN_LOGIN_TOKEN__">
+  <title>msg</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" type="module"></script>
+  <script src="import.js" type="module"></script>
+  <script src="glass-select.js" type="module"></script>
+</head>
+<body>
+  <div class="shell">
+    <div class="ambient" aria-hidden="true"><span class="ambient-grid"></span></div>
+    <header class="header">
+      <img class="brand-icon" src="assets/icon.svg" alt="">
+      <div class="brand-copy">
+        <h1 id="page-title">msg</h1>
+        <p id="page-subtitle">Proxy exits, isolated sign-ins, one account ledger.</p>
+      </div>
+      <div class="header-status" id="header-status">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="header-status-label">Local service</span>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="msg">
+      <button class="tab is-active" id="tab-providers" type="button" role="tab"
+        aria-selected="true" aria-controls="panel-providers">
+        <span id="tab-providers-label">Providers</span>
+        <span class="tab-count" id="provider-count">0</span>
+      </button>
+      <button class="tab" id="tab-proxies" type="button" role="tab"
+        aria-selected="false" aria-controls="panel-proxies">
+        <span id="tab-proxies-label">Proxy IPs</span>
+        <span class="tab-count" id="proxy-count">0</span>
+      </button>
+      <button class="tab" id="tab-accounts" type="button" role="tab"
+        aria-selected="false" aria-controls="panel-accounts">
+        <span id="tab-accounts-label">Accounts</span>
+        <span class="tab-count" id="account-count">0</span>
+      </button>
+    </nav>
+
+    <main>
+      <section class="panel" id="panel-providers" role="tabpanel" aria-labelledby="tab-providers">
+        <div class="section-head">
+          <div>
+            <h2 id="providers-title">Providers</h2>
+            <p id="providers-copy">Supported providers and their current sign-in readiness.</p>
+          </div>
+        </div>
+        <div class="setup-card" id="environment-setup" hidden>
+          <div class="setup-head">
+            <h3 id="environment-title">Login browser setup</h3>
+            <span class="setup-badge" id="environment-badge">Not installed</span>
+          </div>
+          <p class="setup-copy" id="environment-copy">msg needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.</p>
+          <dl class="setup-facts">
+            <div>
+              <dt id="environment-size-label">Download</dt>
+              <dd id="environment-size-value"></dd>
+            </div>
+            <div>
+              <dt id="environment-disk-label">Free disk space</dt>
+              <dd id="environment-disk-value"></dd>
+            </div>
+            <div class="setup-fact-wide">
+              <dt id="environment-location-label">Install location</dt>
+              <dd id="environment-location-value"></dd>
+            </div>
+          </dl>
+          <p class="setup-note" id="environment-note"></p>
+          <div class="setup-progress" id="environment-progress" hidden>
+            <div class="progress-track"><div class="progress-bar" id="environment-progress-bar"></div></div>
+            <span class="progress-text" id="environment-progress-text"></span>
+          </div>
+          <p class="form-error" id="environment-error" role="alert" hidden></p>
+          <div class="setup-actions">
+            <button class="button primary" id="environment-prepare" type="button">Prepare browser</button>
+            <button class="button" id="environment-cancel" type="button" hidden>Cancel</button>
+            <button class="button primary" id="environment-retry" type="button" hidden>Retry</button>
+          </div>
+        </div>
+        <div class="identities-card" id="account-identities" hidden>
+          <div class="setup-head">
+            <h3 id="identities-title">Account identities</h3>
+            <span class="setup-badge" id="identities-badge">0</span>
+          </div>
+          <p class="setup-copy" id="identities-copy">Each account keeps its own browser fingerprint. A signed-out identity is kept, so signing in again reuses the same fingerprint instead of drawing a new one.</p>
+          <div class="identity-list" id="account-identities-list"></div>
+          <p class="form-error" id="identities-error" role="alert" hidden></p>
+          <p class="setup-note" id="identities-notice" role="status" hidden></p>
+          <div class="setup-actions">
+            <button class="button" id="identities-retry" type="button">Retry</button>
+          </div>
+        </div>
+        <div class="empty" id="providers-empty">
+          <img src="assets/icon.svg" alt="">
+          <strong id="providers-empty-title">No providers yet</strong>
+          <p id="providers-empty-copy">Supported providers appear here when the local service is ready.</p>
+        </div>
+        <div class="provider-grid" id="providers-list" hidden></div>
+        <!-- Open by default: every provider magpie and its plugins know about is
+             listed on the page, not hidden behind a disclosure. -->
+        <details class="providers-more" id="providers-more" open hidden>
+          <summary class="providers-more-summary">
+            <span class="providers-more-title" id="providers-more-title">Other subscription providers</span>
+            <span class="providers-more-count" id="providers-more-count">0</span>
+          </summary>
+          <p class="providers-more-hint" id="providers-more-hint">Every other subscription service the local data knows about: magpie's own providers, and the plugins written for magpie and checked against its built-in sign-in.</p>
+          <div class="provider-grid" id="providers-more-list"></div>
+          <div class="provider-sources" id="provider-sources" hidden>
+            <span class="provider-sources-badge" id="provider-sources-badge"></span>
+            <span class="provider-sources-note" id="provider-sources-note"></span>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel" id="panel-proxies" role="tabpanel" aria-labelledby="tab-proxies" hidden>
+        <div class="section-head">
+          <div>
+            <h2 id="proxies-title">Proxy IPs</h2>
+            <p id="proxies-copy">Each account signs in and makes requests through the proxy you choose.</p>
+          </div>
+          <div class="section-actions">
+            <button class="button primary" id="add-proxy" type="button">
+              <span aria-hidden="true">+</span>
+              <span id="add-proxy-label">Add Proxy</span>
+            </button>
+          </div>
+        </div>
+        <div class="empty" id="proxies-empty">
+          <img src="assets/icon.svg" alt="">
+          <strong id="proxies-empty-title">No proxy IPs yet</strong>
+          <p id="proxies-empty-copy">Add a proxy to give providers a clean exit.</p>
+          <button class="button primary" id="add-proxy-empty" type="button">Add Proxy</button>
+        </div>
+        <div class="proxy-filters" id="proxy-filters" hidden>
+          <div class="filter-group" role="group" aria-labelledby="filter-region-label">
+            <span class="filter-label" id="filter-region-label">Region</span>
+            <div class="filter-chips" id="filter-regions"></div>
+          </div>
+          <div class="filter-group filter-latency">
+            <span class="filter-label" id="filter-latency-label">Latency (ms)</span>
+            <div class="filter-range">
+              <input class="filter-input" id="filter-latency-min" type="number" min="0" step="1"
+                inputmode="numeric" placeholder="Min" aria-label="Minimum latency">
+              <span class="filter-range-sep" aria-hidden="true">–</span>
+              <input class="filter-input" id="filter-latency-max" type="number" min="0" step="1"
+                inputmode="numeric" placeholder="Max" aria-label="Maximum latency">
+            </div>
+          </div>
+          <div class="filter-actions">
+            <span class="filter-count" id="filter-count"></span>
+            <button class="button quiet" id="filter-reset" type="button">Reset</button>
+          </div>
+        </div>
+        <div class="proxy-score-bar" id="proxy-score-bar" hidden>
+          <span class="proxy-score-state" id="proxy-score-state"></span>
+          <button class="button quiet" id="score-cancel" type="button" hidden>Close window</button>
+        </div>
+        <div class="proxy-table" id="proxy-table" hidden>
+          <div class="proxy-table-head" aria-hidden="true">
+            <span id="col-name">Name</span>
+            <span id="col-address">Address</span>
+            <span id="col-region">Region</span>
+            <span id="col-score">Score</span>
+            <span id="col-status">Status</span>
+            <span id="col-checked">Last checked</span>
+            <span></span>
+          </div>
+          <div id="proxies-list"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-accounts" role="tabpanel" aria-labelledby="tab-accounts" hidden>
+        <div class="section-head">
+          <div>
+            <h2 id="accounts-title">Accounts</h2>
+            <p id="accounts-copy">Every account used with msg, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.</p>
+          </div>
+          <div class="section-actions">
+            <button class="button" id="import-credential" type="button">导入凭据</button>
+            <button class="button" id="accounts-refresh" type="button">Refresh</button>
+          </div>
+        </div>
+        <p class="setup-note accounts-notice" id="accounts-notice" role="status" hidden></p>
+        <div class="account-toolbar" id="account-toolbar">
+          <div class="field account-toolbar-search">
+            <label for="account-search" id="account-search-label">Search accounts</label>
+            <input id="account-search" type="search" autocomplete="off" spellcheck="false"
+              placeholder="Search accounts" aria-label="Search accounts">
+          </div>
+          <div class="field account-toolbar-sort">
+            <label for="account-sort" id="account-sort-label">Sort</label>
+            <select id="account-sort">
+              <option value="lastLogin" id="account-sort-last-login">Recent login</option>
+              <option value="name" id="account-sort-name">Account name</option>
+              <option value="provider" id="account-sort-provider">Provider</option>
+              <option value="grade" id="account-sort-grade">Check grade</option>
+            </select>
+          </div>
+        </div>
+        <div class="proxy-filters account-filters" id="account-filters">
+          <div class="filter-group" role="group" aria-labelledby="account-filter-label">
+            <span class="filter-label" id="account-filter-label">Status</span>
+            <div class="filter-chips" id="account-filter-chips">
+              <button class="filter-chip is-active" id="account-filter-all" type="button"
+                data-account-filter="all" aria-pressed="true"><span id="account-filter-all-label">All</span> <span class="filter-chip-count" id="account-filter-all-count">0</span></button>
+              <button class="filter-chip" id="account-filter-signed-in" type="button"
+                data-account-filter="signedIn" aria-pressed="false"><span id="account-filter-signed-in-label">Signed in</span> <span class="filter-chip-count" id="account-filter-signed-in-count">0</span></button>
+              <button class="filter-chip" id="account-filter-signed-out" type="button"
+                data-account-filter="signedOut" aria-pressed="false"><span id="account-filter-signed-out-label">Signed out</span> <span class="filter-chip-count" id="account-filter-signed-out-count">0</span></button>
+            </div>
+          </div>
+          <div class="filter-actions">
+            <span class="filter-count" id="account-filter-count"></span>
+          </div>
+        </div>
+        <ul class="grade-legend" id="grade-legend">
+          <li class="grade-legend-label" id="grade-legend-label">Verdict</li>
+          <li><span class="proxy-score good">A</span><span id="grade-a">Clean · ready to use</span></li>
+          <li><span class="proxy-score good">B</span><span id="grade-b">Usable · some traces</span></li>
+          <li><span class="proxy-score warn">C</span><span id="grade-c">Change the exit</span></li>
+          <li><span class="proxy-score bad">D</span><span id="grade-d">Do not use this exit</span></li>
+        </ul>
+        <p class="grade-disclaimer" id="grade-disclaimer">This is a verdict from the third-party site who.1ms.dog. It is not a provider risk-control conclusion, and it is not a fingerprint score of our own.</p>
+        <div class="proxy-table account-table" id="account-table" hidden>
+          <div class="proxy-table-head account-table-head" aria-hidden="true">
+            <span id="account-col-name">Account</span>
+            <span id="account-col-fingerprint">Fingerprint</span>
+            <span id="account-col-last-login">Last login</span>
+            <span id="account-col-check">Identity check</span>
+            <span id="account-col-status">Status</span>
+            <span id="account-col-actions">Actions</span>
+          </div>
+          <div id="accounts-list"></div>
+        </div>
+        <div class="empty" id="accounts-empty" hidden>
+          <img src="assets/icon.svg" alt="">
+          <strong id="accounts-empty-title">No accounts yet</strong>
+          <p id="accounts-empty-copy">Accounts appear here after a sign-in through msg.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span class="service-state" id="service-state" data-state="connecting">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="service-label">Connecting…</span>
+      </span>
+      <span class="footer-meta">
+        <span id="version"></span>
+        <button class="link" id="retry" type="button" hidden>Retry</button>
+      </span>
+    </footer>
+  </div>
+
+  <dialog id="proxy-dialog" class="dialog">
+    <form id="proxy-form" novalidate>
+      <div class="dialog-head">
+        <div>
+          <h3 id="proxy-dialog-title">Add Proxy IP</h3>
+          <p id="proxy-dialog-copy">HTTP, HTTPS and SOCKS5 are supported.</p>
+        </div>
+        <button class="dialog-close" id="proxy-close" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="form-grid">
+          <div class="field">
+            <label for="proxy-name" id="label-name">Name</label>
+            <input id="proxy-name" name="name" type="text" autocomplete="off" maxlength="80"
+              placeholder="Singapore · 01" required>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="proxy-type" id="label-type">Type</label>
+              <select id="proxy-type" name="type">
+                <option value="http">HTTP</option>
+                <option value="https">HTTPS</option>
+                <option value="socks5">SOCKS5</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="proxy-port" id="label-port">Port</label>
+              <input id="proxy-port" name="port" type="text" inputmode="numeric"
+                autocomplete="off" maxlength="5" placeholder="1080" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="proxy-host" id="label-host">Host</label>
+            <input id="proxy-host" name="host" type="text" autocomplete="off" maxlength="255"
+              placeholder="127.0.0.1" required>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="proxy-username" id="label-username"><span id="username-label">Username</span> <span class="optional" id="username-optional">(optional)</span></label>
+              <input id="proxy-username" name="username" type="text" autocomplete="off" maxlength="255">
+            </div>
+            <div class="field">
+              <label for="proxy-password" id="label-password"><span id="password-label">Password</span> <span class="optional" id="password-optional">(optional)</span></label>
+              <input id="proxy-password" name="password" type="password"
+                autocomplete="new-password" spellcheck="false" maxlength="255">
+              <p class="field-hint" id="proxy-password-hint" hidden></p>
+            </div>
+          </div>
+        </div>
+        <p class="form-error" id="proxy-form-error" role="alert" hidden></p>
+        <div class="proxy-test-result" id="proxy-test-result" role="status" hidden></div>
+      </div>
+      <div class="dialog-footer">
+        <button class="button quiet" id="test-proxy" type="button">Test connection</button>
+        <button class="button" id="proxy-cancel" type="button">Cancel</button>
+        <!-- Save MUST be type="button" with an explicit click handler. magpie
+             mounts page plugins in <iframe sandbox="allow-scripts">, which has
+             no allow-forms token: the browser blocks form submission before the
+             submit event fires, so a submit-type (or implicit submission)
+             button is silently dead in magpie. Never change this to a
+             submit-type button. -->
+        <button class="button primary" id="save-proxy" type="button">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="signin-dialog" class="dialog signin-dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="signin-title">Add account</h3>
+        <p id="signin-copy">This opens an isolated browser window.</p>
+      </div>
+      <button class="dialog-close" id="signin-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="signin-provider" id="signin-provider"></p>
+      <p class="signin-unverified" id="signin-unverified"></p>
+      <div class="field" id="signin-method-field" hidden>
+        <label for="signin-method" id="signin-method-label">Sign-in method</label>
+        <select id="signin-method" name="method"></select>
+        <p class="field-hint" id="signin-method-hint" hidden></p>
+      </div>
+      <div class="field" id="signin-account-field" hidden>
+        <label for="signin-account" id="signin-account-label">Continue with an existing identity</label>
+        <select id="signin-account" name="account"></select>
+        <p class="field-hint" id="signin-account-hint" hidden></p>
+      </div>
+      <div class="field" id="signin-proxy-field">
+        <label for="signin-proxy" id="signin-proxy-label">Proxy IP</label>
+        <select id="signin-proxy" name="proxy"></select>
+      </div>
+      <p class="signin-notice" id="signin-notice" hidden></p>
+      <p class="form-error" id="signin-error" role="alert" hidden></p>
+      <div class="signin-status" id="signin-status" hidden>
+        <span class="signin-status-state" id="signin-status-state"></span>
+        <span class="signin-status-detail" id="signin-status-detail"></span>
+      </div>
+      <div class="signin-result" id="signin-result" hidden>
+        <span class="signin-result-label" id="signin-result-label"></span>
+        <code class="signin-result-key" id="signin-result-key"></code>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="button quiet" id="signin-cancel" type="button" hidden>Cancel sign-in</button>
+      <button class="button" id="signin-close-footer" type="button">Close</button>
+      <button class="button primary" id="signin-start" type="button">Start sign-in</button>
+    </div>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="dialog confirm-dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="confirm-title">Delete proxy IP?</h3>
+        <p id="confirm-copy"></p>
+      </div>
+      <button class="dialog-close" id="confirm-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="form-error" id="confirm-error" role="alert" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button" id="confirm-cancel" type="button">Cancel</button>
+      <button class="button danger" id="confirm-action" type="button">Delete</button>
+    </div>
+  </dialog>
+
+  <dialog id="account-detail-dialog" class="dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="account-detail-title">Account</h3>
+        <p id="account-detail-copy"></p>
+      </div>
+      <button class="dialog-close" id="account-detail-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <dl class="setup-facts" id="account-detail-facts"></dl>
+      <div class="field account-note-field">
+        <label for="account-detail-note" id="account-detail-note-label">Note</label>
+        <textarea id="account-detail-note" rows="3" maxlength="200"
+          autocomplete="off" spellcheck="false"></textarea>
+        <p class="field-hint" id="account-detail-note-hint"></p>
+        <p class="setup-note" id="account-detail-note-status" role="status" hidden></p>
+      </div>
+      <p class="form-error" id="account-detail-error" role="alert" hidden></p>
+      <p class="setup-note account-detail-history-title" id="account-detail-history-title">Check history</p>
+      <div class="identity-list" id="account-detail-history"></div>
+    </div>
+    <div class="dialog-footer">
+      <button class="button" id="account-detail-dismiss" type="button">Close</button>
+      <button class="button" id="account-detail-check" type="button">Check</button>
+      <button class="button primary" id="account-detail-note-save" type="button">Save note</button>
+    </div>
+  </dialog>
+
+  <dialog id="account-check-dialog" class="dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="account-check-title">Identity check</h3>
+        <p id="account-check-copy"></p>
+      </div>
+      <button class="dialog-close" id="account-check-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <div id="account-check-setup">
+        <div class="field">
+          <label for="account-check-proxy" id="account-check-proxy-label">Proxy IP</label>
+          <select id="account-check-proxy"></select>
+          <p class="field-hint" id="account-check-proxy-hint"></p>
+        </div>
+        <dl class="setup-facts">
+          <div><dt id="account-check-target-label">Target site</dt><dd>who.1ms.dog/zh-cn/</dd></div>
+          <div><dt id="account-check-eta-label">Expected time</dt><dd id="account-check-eta-value"></dd></div>
+          <div class="setup-fact-wide"><dt id="account-check-identity-label">Identity used</dt><dd id="account-check-identity"></dd></div>
+        </dl>
+        <p class="setup-note" id="account-check-note"></p>
+      </div>
+      <div id="account-check-running" hidden>
+        <div class="setup-progress">
+          <div class="progress-track"><div class="progress-bar" id="account-check-progress-bar"></div></div>
+          <span class="progress-text" id="account-check-progress-text"></span>
+        </div>
+        <p class="setup-note" id="account-check-running-state"></p>
+      </div>
+      <div id="account-check-result" hidden>
+        <div class="account-check-hero">
+          <span class="proxy-score" id="account-check-grade">—</span>
+          <p id="account-check-summary"></p>
+        </div>
+        <p class="check-verdict" id="account-check-verdict"></p>
+        <dl class="setup-facts">
+          <div><dt id="account-check-grade-label">Grade</dt><dd id="account-check-grade-value"></dd></div>
+          <div><dt id="account-check-exit-label">Exit</dt><dd id="account-check-exit"></dd></div>
+          <div><dt id="account-check-time-label">Time</dt><dd id="account-check-time"></dd></div>
+        </dl>
+        <ul class="account-check-lines" id="account-check-lines"></ul>
+        <p class="setup-note" id="account-check-result-note"></p>
+      </div>
+      <div id="account-check-failed" hidden>
+        <p class="check-failed-title" id="account-check-failed-title"></p>
+        <p class="setup-note" id="account-check-failed-detail"></p>
+        <ul class="account-check-lines" id="account-check-failed-lines"></ul>
+      </div>
+      <p class="form-error" id="account-check-error" role="alert" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button quiet" id="account-check-dismiss" type="button">Close</button>
+      <button class="button quiet" id="account-check-cancel" type="button" hidden>Cancel check</button>
+      <button class="button" id="account-check-reexit" type="button" hidden>Check with another exit</button>
+      <button class="button" id="account-check-details" type="button" hidden>Details</button>
+      <button class="button" id="account-check-change-exit" type="button" hidden>Choose another exit</button>
+      <button class="button primary" id="account-check-start" type="button">Start check</button>
+      <button class="button primary" id="account-check-again" type="button" hidden>Check again</button>
+      <button class="button primary" id="account-check-retry" type="button" hidden>Retry</button>
+    </div>
+  </dialog>
+
+  <!-- Importing a pasted credential. The credential is validated by the local
+       service (one real refresh) before it is written through magpie's own
+       client.auth.set, so a dead credential is reported here instead of being
+       stored. Every control is type="button": magpie's sandbox has no
+       allow-forms. -->
+  <dialog id="import-dialog" class="dialog import-dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="import-title">导入凭据</h3>
+        <p id="import-copy">粘贴 WorkBuddy 凭据。校验通过后直接写入 magpie，并出现在账号列表里。</p>
+      </div>
+      <button class="dialog-close" id="import-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="import-provider">
+        <span class="provider-mark tone-cyan" aria-hidden="true">Wb</span>
+        <div>
+          <strong>WorkBuddy</strong>
+          <small>CodeBuddy · copilot.tencent.com</small>
+        </div>
+        <span class="import-kind" id="import-kind">登录凭据 / API key</span>
+      </div>
+      <div class="field">
+        <label for="import-text" id="import-text-label">凭据</label>
+        <textarea id="import-text" rows="9" spellcheck="false" autocomplete="off"
+          placeholder='{"account":{…},"auth":{"accessToken":"…","refreshToken":"…"}}
+或：access_token=…; refresh_token=…
+或：Cookie: access_token=…; refresh_token=…
+或：ck_…（WorkBuddy API key）'></textarea>
+        <p class="field-hint" id="import-text-hint">支持 JSON、扁平数组、Cookie / 请求头、curl、query 串和 API key。字段大小写与驼峰 / 下划线都认，时间戳秒和毫秒都认。</p>
+      </div>
+      <div class="import-status" id="import-status" hidden>
+        <span class="import-status-dot" aria-hidden="true"></span>
+        <span id="import-status-text">准备中…</span>
+      </div>
+      <p class="form-error" id="import-error" role="alert" hidden></p>
+      <p class="import-success" id="import-success" role="status" hidden></p>
+      <p class="setup-note import-note" id="import-note">凭据只在内存里过一遍：只发一个刷新请求，不落盘、不外发。重复账号会被拒绝。</p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button" id="import-cancel" type="button">取消</button>
+      <button class="button primary" id="import-submit" type="button">校验并导入</button>
+    </div>
+  </dialog>
+
+  <!-- Reporting a provider card. The body is written by the service, so the
+       page only collects an optional note; nothing here reads an account.
+       Every control is type="button": magpie's sandbox has no allow-forms, so
+       a form or a submit button would be silently dead in this frame. -->
+  <dialog id="report-dialog" class="dialog report-dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="report-title">Report a problem</h3>
+        <p id="report-copy"></p>
+      </div>
+      <button class="dialog-close" id="report-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="report-card-line" id="report-card"></p>
+      <div class="field">
+        <label for="report-note" id="report-note-label">Anything to add?</label>
+        <textarea id="report-note" rows="3" maxlength="1500"></textarea>
+        <p class="field-hint" id="report-note-hint"></p>
+      </div>
+      <div class="field">
+        <label id="report-draft-label">What will be posted</label>
+        <pre class="report-draft" id="report-draft" tabindex="0"></pre>
+        <p class="field-hint" id="report-draft-hint"></p>
+      </div>
+      <p class="form-error" id="report-error" role="alert" hidden></p>
+      <p class="report-status" id="report-status" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button" id="report-cancel" type="button">Cancel</button>
+      <button class="button" id="report-copy-body" type="button">Copy text</button>
+      <button class="button primary" id="report-open" type="button">Open on GitHub</button>
+    </div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+</body>
+</html>

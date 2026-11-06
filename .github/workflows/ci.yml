@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      # --ignore-scripts keeps CI fast and deterministic: the tests never open a
+      # real browser (the score tests skip when one is not prepared), so the
+      # browser download a postinstall script would start is not needed.
+      - name: Install dependencies
+        run: bun install --ignore-scripts
+      - name: Test
+        run: bun test
+
+  version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history makes the base commit and its merge-base available; the
+          # script can still fetch a missing base ref in a shallow checkout.
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - name: Require a version bump for shipped-code changes
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
+        run: bun scripts/check-version-bump.mjs --base "$BASE_REF"

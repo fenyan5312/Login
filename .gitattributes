@@ -1,0 +1,7 @@
+# Keep the working tree LF on every platform.
+#
+# test/proxy-filter.test.mjs matches the filter bar with an LF-anchored regex,
+# so a Windows clone using core.autocrlf=true checks ui/index.html out as CRLF
+# and that test fails even though the stored blob is fine. Pinning eol=lf here
+# makes the checkout match the blob instead of depending on each clone's config.
+* text=auto eol=lf
