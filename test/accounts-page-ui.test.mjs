@@ -27,6 +27,7 @@ const buttonIds = [
   "account-check-change-exit", "account-check-start", "account-check-again",
   "account-check-retry",
   "add-proxy-group", "group-close", "group-cancel", "save-group",
+  "add-tag", "tag-close", "tag-cancel", "save-tag",
   "report-close", "report-cancel", "report-copy-body", "report-open",
   "import-credential", "import-close", "import-cancel", "import-submit",
 ];

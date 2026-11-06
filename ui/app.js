@@ -223,12 +223,47 @@ const messages = {
     groupCancel: "Cancel",
     groupDeleteTitle: "Delete IP group?",
     groupDeleteCopy: "Delete “{name}”? Its IPs and the accounts' remembered exits are kept.",
-    proxyTagsHint: "Comma-separated. A tag-mode group selects the IPs carrying its tag.",
+    groupParentLabel: "Parent group",
+    groupParentTop: "Top level",
+    groupParentHint: "Top level unless you nest it under another group; the tree is three levels deep at most.",
+    groupTagNone: "Choose a tag",
+    groupTagEmptyHint: "No tags yet. Create one in the Tags panel first.",
+    tagPanelTitle: "Tags",
+    tagPanelCopy: "Tags form a tree: a tag can have child tags, and a group can select every IP under a tag.",
+    addTag: "New tag",
+    tagEmpty: "No tags yet. Create one to group IPs by tag.",
+    tagTitleNew: "New tag",
+    tagTitleMove: "Move tag",
+    tagDialogCopy: "A tag name is fixed once created; only its parent can change.",
+    tagDialogMoveCopy: "Move “{name}”. The name cannot change; pick a new parent.",
+    tagNameLabel: "Name",
+    tagNamePlaceholder: "claude",
+    tagParentLabel: "Parent tag",
+    tagParentTop: "Top level",
+    tagParentHint: "A tag under another tag is a child; selecting the parent covers the whole subtree.",
+    tagNameRequired: "Enter a tag name.",
+    tagSave: "Save tag",
+    tagMove: "Move",
+    tagDeleteTitle: "Delete tag?",
+    tagDeleteCopy: "Delete “{name}”? IPs and groups keep their own records.",
+    tagChildCount: "{n} children",
+    tagProxyCount: "{n} IPs",
+    tagGroupCount: "{n} groups",
+    errorTagInUse: "This tag still has child tags, or is used by IPs or groups.",
+    errorTagInvalid: "This tag is not valid.",
+    errorTagNotFound: "This tag no longer exists.",
+    errorGroupHasChildren: "This group still has child groups. Move or delete them first.",
+    errorInvalidParent: "That parent is not valid: no loops, and the tree is three levels deep at most.",
+    errorProviderMismatch: "A child group must use the same provider as its parent.",
+    errorGroupFull: "Every IP in this group is at its cap. Add an IP or raise the accounts-per-IP limit.",
+    errorGroupProxyMismatch: "That IP is not a member of the chosen group.",
+    errorTagExists: "That tag already exists.",
+    proxyTagsHint: "Comma-separated. New tags are created automatically and can be nested later in the Tags panel.",
     tagsInvalid: "Tags may not contain control characters, and the list is too long.",
     signInGroupLabel: "IP group",
     signInGroupNone: "No group (direct / pick an IP)",
-    signInGroupHint: "A group picks the least-loaded IP for a new account. An existing identity keeps the IP it signed in with.",
-    signInGroupHintScoped: "This provider's group is selected by default. An existing identity still keeps the IP it signed in with.",
+    signInGroupHint: "A group picks the least-loaded IP for a new account, including IPs in its child groups. An existing identity keeps the IP it signed in with.",
+    signInGroupHintScoped: "This provider's group is selected by default, and its child groups count too. An existing identity still keeps the IP it signed in with.",
     signInProxyGroupAuto: "Auto: least-loaded IP in this group",
     accountGroupLabel: "Group",
     editProxyTitle: "Edit Proxy IP",
@@ -626,12 +661,47 @@ const messages = {
     groupCancel: "取消",
     groupDeleteTitle: "删除 IP 组？",
     groupDeleteCopy: "删除“{name}”？组内 IP 和账号记住的出口都会保留。",
-    proxyTagsHint: "逗号分隔。标签模式的分组会选中所有带该标签的 IP。",
+    groupParentLabel: "上级分组",
+    groupParentTop: "顶层",
+    groupParentHint: "默认是顶层；也可以挂到别的分组下面，最多三层。",
+    groupTagNone: "选择标签",
+    groupTagEmptyHint: "还没有标签。先到标签面板新建一个。",
+    tagPanelTitle: "标签",
+    tagPanelCopy: "标签是一棵层级树：标签可以有子标签，分组可以选中某个标签下的全部 IP。",
+    addTag: "新建标签",
+    tagEmpty: "还没有标签。新建一个，就能按标签圈选 IP。",
+    tagTitleNew: "新建标签",
+    tagTitleMove: "移动标签",
+    tagDialogCopy: "标签名一经创建就不能改，只能调整它的上级。",
+    tagDialogMoveCopy: "移动“{name}”。名称不能改，只能换一个上级。",
+    tagNameLabel: "名称",
+    tagNamePlaceholder: "claude",
+    tagParentLabel: "上级标签",
+    tagParentTop: "顶层",
+    tagParentHint: "挂在别的标签下就是子标签；选中上级标签会覆盖整棵子树。",
+    tagNameRequired: "请填写标签名。",
+    tagSave: "保存标签",
+    tagMove: "移动",
+    tagDeleteTitle: "删除标签？",
+    tagDeleteCopy: "删除“{name}”？IP 和分组各自的记录都会保留。",
+    tagChildCount: "{n} 个子标签",
+    tagProxyCount: "{n} 个 IP",
+    tagGroupCount: "{n} 个分组",
+    errorTagInUse: "这个标签还有子标签，或仍被 IP / 分组使用，暂时不能删除。",
+    errorTagInvalid: "标签不合法。",
+    errorTagNotFound: "这个标签已经不存在了。",
+    errorGroupHasChildren: "这个分组下面还有子分组，请先移走或删除子分组。",
+    errorInvalidParent: "父级不合法：不能形成循环，且最多三层。",
+    errorProviderMismatch: "子分组必须与父分组使用同一供应商。",
+    errorGroupFull: "这个分组的 IP 已到上限，请先加 IP 或调整每个 IP 的账号数。",
+    errorGroupProxyMismatch: "这个 IP 不在所选分组里。",
+    errorTagExists: "这个标签已经存在。",
+    proxyTagsHint: "逗号分隔。新标签会自动创建，之后可以在标签面板里调整层级。",
     tagsInvalid: "标签不能包含控制字符，且列表不能过长。",
     signInGroupLabel: "IP 组",
     signInGroupNone: "不使用分组（直连 / 手动选 IP）",
-    signInGroupHint: "选择分组后，会为新账号分配组内负载最低的 IP；已登录身份沿用上次的 IP。",
-    signInGroupHintScoped: "该供应商的分组已默认选中；已登录身份仍会沿用上次的 IP。",
+    signInGroupHint: "选择分组后，会为新账号分配组内（含子分组）负载最低的 IP；已登录身份沿用上次的 IP。",
+    signInGroupHintScoped: "该供应商的分组已默认选中，子分组也计入；已登录身份仍会沿用上次的 IP。",
     signInProxyGroupAuto: "自动：组内负载最低的 IP",
     accountGroupLabel: "分组",
     editProxyTitle: "编辑代理 IP",
@@ -1029,12 +1099,47 @@ const messages = {
     groupCancel: "取消",
     groupDeleteTitle: "刪除 IP 組？",
     groupDeleteCopy: "刪除「{name}」？組內 IP 和帳號記住的出口都會保留。",
-    proxyTagsHint: "逗號分隔。標籤模式的分組會選中所有帶該標籤的 IP。",
+    groupParentLabel: "上層分組",
+    groupParentTop: "頂層",
+    groupParentHint: "預設是頂層；也可以掛到別的分組下面，最多三層。",
+    groupTagNone: "選擇標籤",
+    groupTagEmptyHint: "還沒有標籤。先到標籤面板新增一個。",
+    tagPanelTitle: "標籤",
+    tagPanelCopy: "標籤是一棵層級樹：標籤可以有子標籤，分組可以選中某個標籤下的全部 IP。",
+    addTag: "新增標籤",
+    tagEmpty: "還沒有標籤。新增一個，就能依標籤圈選 IP。",
+    tagTitleNew: "新增標籤",
+    tagTitleMove: "移動標籤",
+    tagDialogCopy: "標籤名一經建立就不能改，只能調整它的上層。",
+    tagDialogMoveCopy: "移動「{name}」。名稱不能改，只能換一個上層。",
+    tagNameLabel: "名稱",
+    tagNamePlaceholder: "claude",
+    tagParentLabel: "上層標籤",
+    tagParentTop: "頂層",
+    tagParentHint: "掛在別的標籤下就是子標籤；選中上層標籤會涵蓋整棵子樹。",
+    tagNameRequired: "請填寫標籤名。",
+    tagSave: "儲存標籤",
+    tagMove: "移動",
+    tagDeleteTitle: "刪除標籤？",
+    tagDeleteCopy: "刪除「{name}」？IP 和分組各自的記錄都會保留。",
+    tagChildCount: "{n} 個子標籤",
+    tagProxyCount: "{n} 個 IP",
+    tagGroupCount: "{n} 個分組",
+    errorTagInUse: "這個標籤還有子標籤，或仍被 IP / 分組使用，暫時不能刪除。",
+    errorTagInvalid: "標籤不合法。",
+    errorTagNotFound: "這個標籤已經不存在了。",
+    errorGroupHasChildren: "這個分組下面還有子分組，請先移走或刪除子分組。",
+    errorInvalidParent: "父級不合法：不能形成循環，且最多三層。",
+    errorProviderMismatch: "子分組必須與父分組使用同一供應商。",
+    errorGroupFull: "這個分組的 IP 已到上限，請先加 IP 或調整每個 IP 的帳號數。",
+    errorGroupProxyMismatch: "這個 IP 不在所選分組裡。",
+    errorTagExists: "這個標籤已經存在。",
+    proxyTagsHint: "逗號分隔。新標籤會自動建立，之後可以在標籤面板裡調整層級。",
     tagsInvalid: "標籤不能包含控制字元，且列表不能過長。",
     signInGroupLabel: "IP 組",
     signInGroupNone: "不使用分組（直連 / 手動選 IP）",
-    signInGroupHint: "選擇分組後，會為新帳號分配組內負載最低的 IP；已登入身分沿用上次的 IP。",
-    signInGroupHintScoped: "該供應商的分組已預設選中；已登入身分仍會沿用上次的 IP。",
+    signInGroupHint: "選擇分組後，會為新帳號分配組內（含子分組）負載最低的 IP；已登入身分沿用上次的 IP。",
+    signInGroupHintScoped: "該供應商的分組已預設選中，子分組也計入；已登入身分仍會沿用上次的 IP。",
     signInProxyGroupAuto: "自動：組內負載最低的 IP",
     accountGroupLabel: "分組",
     editProxyTitle: "編輯代理 IP",
@@ -1433,12 +1538,47 @@ const messages = {
     groupCancel: "キャンセル",
     groupDeleteTitle: "IP グループを削除しますか？",
     groupDeleteCopy: "「{name}」を削除しますか？グループ内の IP とアカウントが記憶した出口は保持されます。",
-    proxyTagsHint: "カンマ区切り。タグモードのグループはこのタグを持つ IP を選びます。",
+    groupParentLabel: "親グループ",
+    groupParentTop: "最上位",
+    groupParentHint: "既定は最上位です。別のグループの下にも置けますが、階層は最大 3 レベルです。",
+    groupTagNone: "タグを選択",
+    groupTagEmptyHint: "タグがまだありません。先にタグパネルで作成してください。",
+    tagPanelTitle: "タグ",
+    tagPanelCopy: "タグは階層を持つ登録簿です。子タグを作れ、グループはタグ配下のすべての IP を選べます。",
+    addTag: "タグを作成",
+    tagEmpty: "タグがまだありません。作成すると IP をタグでまとめられます。",
+    tagTitleNew: "タグを作成",
+    tagTitleMove: "タグを移動",
+    tagDialogCopy: "タグ名は作成後に変更できません。変更できるのは親だけです。",
+    tagDialogMoveCopy: "「{name}」を移動します。名前は変更できないため、新しい親を選んでください。",
+    tagNameLabel: "名前",
+    tagNamePlaceholder: "claude",
+    tagParentLabel: "親タグ",
+    tagParentTop: "最上位",
+    tagParentHint: "別のタグの下に置くと子タグになります。親を選ぶとサブツリー全体が対象です。",
+    tagNameRequired: "タグ名を入力してください。",
+    tagSave: "タグを保存",
+    tagMove: "移動",
+    tagDeleteTitle: "タグを削除しますか？",
+    tagDeleteCopy: "「{name}」を削除しますか？IP とグループの記録はそれぞれ保持されます。",
+    tagChildCount: "子タグ {n} 件",
+    tagProxyCount: "IP {n} 件",
+    tagGroupCount: "グループ {n} 件",
+    errorTagInUse: "このタグには子タグがあるか、IP またはグループで使われています。",
+    errorTagInvalid: "タグが正しくありません。",
+    errorTagNotFound: "このタグはもう存在しません。",
+    errorGroupHasChildren: "このグループには子グループがあります。先に移動または削除してください。",
+    errorInvalidParent: "親が不正です。循環は不可、ツリーは最大 3 階層です。",
+    errorProviderMismatch: "子グループは親と同じプロバイダーにする必要があります。",
+    errorGroupFull: "このグループの IP はすべて上限に達しています。IP を追加するか、IP あたりのアカウント数を増やしてください。",
+    errorGroupProxyMismatch: "その IP は選択したグループのメンバーではありません。",
+    errorTagExists: "そのタグはすでに存在します。",
+    proxyTagsHint: "カンマ区切り。新しいタグは自動で作成され、後からタグパネルで階層を設定できます。",
     tagsInvalid: "タグに制御文字を含めることはできず、リストも長すぎます。",
     signInGroupLabel: "IP グループ",
     signInGroupNone: "グループ不使用（直接接続 / IP を選択）",
-    signInGroupHint: "グループを選ぶと、新規アカウントには負荷が最も低い IP が割り当てられます。既存の ID は前回の IP を引き続き使います。",
-    signInGroupHintScoped: "このプロバイダーのグループが既定で選択されています。既存の ID は前回の IP を引き続き使います。",
+    signInGroupHint: "グループを選ぶと、新規アカウントにはグループ内（子グループを含む）で負荷が最も低い IP が割り当てられます。既存の ID は前回の IP を引き続き使います。",
+    signInGroupHintScoped: "このプロバイダーのグループが既定で選択され、子グループも対象になります。既存の ID は前回の IP を引き続き使います。",
     signInProxyGroupAuto: "自動：グループ内で最も空いている IP",
     accountGroupLabel: "グループ",
     editProxyTitle: "プロキシ IP を編集",
@@ -1701,6 +1841,9 @@ const byId = (id) => document.getElementById(id);
 
 let proxies = [];
 let proxyGroups = [];
+// The tag registry is a tree of {name,parent,depth,childCount,proxyCount,groupCount}
+// entries in depth-first order, straight from GET /api/bootstrap (and /api/tags).
+let proxyTags = [];
 const rowTests = new Map();
 // Filter state is per document and never persisted: magpie mounts the page in
 // an opaque-origin sandbox frame where web storage is not available.
@@ -1720,6 +1863,7 @@ let confirmKind = "proxy";
 let pendingIdentity = null;
 let dialogContext = null;
 let groupContext = null;
+let tagContext = null;
 let deleting = false;
 let environment = null;
 let environmentJob = null;
@@ -1758,6 +1902,16 @@ const errorKeys = {
   retired_missing: "errorAccountRetiredMissing",
   identity_mismatch: "errorAccountMismatch",
   invalid_account: "errorAccountInvalid",
+  group_has_children: "errorGroupHasChildren",
+  invalid_parent: "errorInvalidParent",
+  provider_mismatch: "errorProviderMismatch",
+  group_full: "errorGroupFull",
+  group_proxy_mismatch: "errorGroupProxyMismatch",
+  tag_exists: "errorTagExists",
+  tag_in_use: "errorTagInUse",
+  tag_invalid: "errorTagInvalid",
+  invalid_tag: "errorTagInvalid",
+  tag_not_found: "errorTagNotFound",
   invalid_name: "errorInvalidName",
   invalid_type: "errorInvalidType",
   invalid_host: "errorInvalidHost",
@@ -1929,6 +2083,21 @@ function applyText() {
   byId("group-cancel").textContent = text.groupCancel;
   byId("save-group").textContent = text.groupSave;
   byId("group-close").setAttribute("aria-label", text.close);
+  byId("label-group-parent").textContent = text.groupParentLabel;
+  byId("group-parent-hint").textContent = text.groupParentHint;
+  byId("tag-panel-title").textContent = text.tagPanelTitle;
+  byId("tag-panel-copy").textContent = text.tagPanelCopy;
+  byId("add-tag-label").textContent = text.addTag;
+  byId("tag-empty").textContent = text.tagEmpty;
+  byId("tag-dialog-title").textContent = text.tagTitleNew;
+  byId("tag-dialog-copy").textContent = text.tagDialogCopy;
+  byId("label-tag-name").textContent = text.tagNameLabel;
+  byId("tag-name").placeholder = text.tagNamePlaceholder;
+  byId("label-tag-parent").textContent = text.tagParentLabel;
+  byId("tag-parent-hint").textContent = text.tagParentHint;
+  byId("tag-cancel").textContent = text.cancel;
+  byId("save-tag").textContent = text.tagSave;
+  byId("tag-close").setAttribute("aria-label", text.close);
   byId("signin-group-label").textContent = text.signInGroupLabel;
   byId("signin-group-hint").textContent = text.signInGroupHint;
   byId("confirm-title").textContent = text.deleteTitle;
@@ -2301,16 +2470,26 @@ function proxyRow(proxy) {
 
 function proxyGroupCard(group) {
   const card = document.createElement("div");
-  card.className = "proxy-group-card";
+  const depth = Number.isFinite(group.depth) ? group.depth : 1;
+  card.className = `proxy-group-card depth-${Math.min(Math.max(depth, 1), 3)}`;
   card.dataset.groupId = group.id;
+  card.dataset.depth = String(depth);
 
   const head = document.createElement("div");
   head.className = "proxy-group-name";
+  const nameWrap = document.createElement("div");
+  nameWrap.className = "proxy-group-name-main";
+  const depthBadge = document.createElement("span");
+  depthBadge.className = "group-depth-badge";
+  // The badge is the depth itself, so the indent never has to be guessed.
+  depthBadge.textContent = `L${Math.min(Math.max(depth, 1), 3)}`;
+  nameWrap.append(depthBadge);
   const name = document.createElement("strong");
   name.textContent = group.name;
+  nameWrap.append(name);
   const mode = document.createElement("span");
   mode.textContent = group.mode === "tag" ? text.groupModeTagShort : text.groupModeGroupShort;
-  head.append(name, mode);
+  head.append(nameWrap, mode);
 
   const meta = document.createElement("div");
   meta.className = "proxy-group-meta";
@@ -2363,6 +2542,77 @@ async function reloadProxyGroups() {
   } catch {
     // The group list is an enhancement over the proxy table; a failed read
     // leaves the last known groups in place.
+  }
+}
+
+// --- tag registry -----------------------------------------------------------
+//
+// A tag is a node in a tree, not a free-floating label. The registry is read
+// from /api/tags (and /api/bootstrap) in depth-first order, so rendering never
+// has to re-sort a parent above its children.
+
+function treeIndent(depth) {
+  // The service counts the first level as 1; only the levels below it indent.
+  const level = Number.isFinite(depth) ? Math.max(1, depth) : 1;
+  return "— ".repeat(level - 1);
+}
+
+function tagRow(tag) {
+  const row = document.createElement("div");
+  const depth = Number.isFinite(tag.depth) ? tag.depth : 1;
+  row.className = `tag-row depth-${Math.min(Math.max(depth, 1), 3)}`;
+  row.dataset.tagName = tag.name;
+  row.dataset.depth = String(depth);
+
+  const nameWrap = document.createElement("div");
+  nameWrap.className = "tag-row-name";
+  const badge = document.createElement("span");
+  badge.className = "tag-depth-badge";
+  badge.textContent = `L${Math.min(Math.max(depth, 1), 3)}`;
+  const name = document.createElement("strong");
+  name.textContent = tag.name;
+  nameWrap.append(badge, name);
+
+  const meta = document.createElement("div");
+  meta.className = "tag-row-meta";
+  for (const label of [
+    text.tagChildCount.replace("{n}", String(tag.childCount || 0)),
+    text.tagProxyCount.replace("{n}", String(tag.proxyCount || 0)),
+    text.tagGroupCount.replace("{n}", String(tag.groupCount || 0)),
+  ]) {
+    const item = document.createElement("span");
+    item.textContent = label;
+    meta.append(item);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "tag-row-actions";
+  const move = miniButton(text.tagMove, () => openTagDialog(tag));
+  const remove = miniButton(text.delete, () => askDeleteTag(tag), true);
+  actions.append(move, remove);
+
+  row.append(nameWrap, meta, actions);
+  return row;
+}
+
+function renderTagList() {
+  const list = byId("tag-list");
+  if (!list) return;
+  list.textContent = "";
+  byId("tag-empty").hidden = proxyTags.length > 0;
+  for (const tag of proxyTags) list.append(tagRow(tag));
+}
+
+async function reloadTags() {
+  try {
+    const data = await api("api/tags");
+    if (Array.isArray(data?.tags)) {
+      proxyTags = data.tags;
+      renderTagList();
+    }
+  } catch {
+    // The tag panel is an enhancement; a failed read keeps the last registry
+    // the bootstrap provided.
   }
 }
 
@@ -3185,6 +3435,16 @@ function signInGroupSelection() {
 
 function proxiesOfGroup(group) {
   if (!group) return proxies;
+  // The service's view already contains every subtree IP in `members`; using
+  // it keeps a parent group's picker honest without re-walking the tree here.
+  if (Array.isArray(group.members)) {
+    const ids = new Set(
+      group.members
+        .map((member) => (typeof member === "string" ? member : member?.id))
+        .filter(Boolean),
+    );
+    return proxies.filter((proxy) => ids.has(proxy.id));
+  }
   if (group.mode === "tag") {
     return proxies.filter((proxy) => Array.isArray(proxy.tags) && proxy.tags.includes(group.tag));
   }
@@ -3202,7 +3462,7 @@ function renderSignInGroups() {
   for (const group of proxyGroups) {
     const option = document.createElement("option");
     option.value = group.id;
-    option.textContent = `${group.name} · ${text.groupCap.replace("{n}", String(group.perIp))}`;
+    option.textContent = `${treeIndent(group.depth)}${group.name} · ${text.groupCap.replace("{n}", String(group.perIp))}`;
     select.append(option);
   }
   // A provider with exactly one group uses it by default; the service applies
@@ -3770,10 +4030,12 @@ function render(data) {
     : Array.isArray(data?.providers) ? data.providers : [];
   proxies = Array.isArray(data?.proxies) ? data.proxies : [];
   proxyGroups = Array.isArray(data?.groups) ? data.groups : [];
+  proxyTags = Array.isArray(data?.tags) ? data.tags : [];
   checkProxies = proxies;
   renderProviders(providers);
   renderProviderSources(view);
   renderProxies();
+  renderTagList();
   byId("version").textContent = data?.version ? `v${data.version}` : "";
   const ready = data?.service?.status === "ready";
   setServiceState(ready ? "ready" : "error", ready ? text.ready : text.failed);
@@ -4215,7 +4477,15 @@ function groupProviderOptions(current) {
   const seen = new Set();
   const options = [];
   for (const provider of providerCatalog) {
-    const id = typeof provider?.signInProvider === "string" ? provider.signInProvider : "";
+    // A group may target a provider that has no runnable browser sign-in yet
+    // (an import-only provider such as Claude). Such a card has no
+    // `signInProvider`, so fall back to its registry id; otherwise the group
+    // dialog would offer no provider at all.
+    const id = typeof provider?.signInProvider === "string" && provider.signInProvider
+      ? provider.signInProvider
+      : typeof provider?.id === "string"
+        ? provider.id
+        : "";
     if (!id || seen.has(id)) continue;
     seen.add(id);
     options.push({ id, label: `${provider.name || id} · ${id}` });
@@ -4239,6 +4509,95 @@ function renderGroupProviderSelect(current) {
     select.append(node);
   }
   select.value = current || "";
+}
+
+// A group can own child groups. The parent picker offers only groups that can
+// still take children (depth below the tree cap), never the group itself or
+// anything under it, and never a group bound to a different provider.
+function groupChildrenMap() {
+  const map = new Map();
+  for (const group of proxyGroups) {
+    const key = group.parentId || "";
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(group);
+  }
+  return map;
+}
+
+function groupSubtreeIds(id) {
+  const children = groupChildrenMap();
+  const out = new Set([id]);
+  const queue = [id];
+  while (queue.length) {
+    const current = queue.shift();
+    for (const child of children.get(current) || []) {
+      if (out.has(child.id)) continue;
+      out.add(child.id);
+      queue.push(child.id);
+    }
+  }
+  return out;
+}
+
+function groupSubtreeHeight(group) {
+  if (!group) return 1;
+  const children = groupChildrenMap().get(group.id) || [];
+  if (!children.length) return 1;
+  return 1 + Math.max(...children.map((child) => groupSubtreeHeight(child)));
+}
+
+function renderGroupParentSelect(provider, currentGroup) {
+  const select = byId("group-parent");
+  if (!select) return;
+  select.textContent = "";
+  const top = document.createElement("option");
+  top.value = "";
+  top.textContent = text.groupParentTop;
+  select.append(top);
+  const excluded = currentGroup ? groupSubtreeIds(currentGroup.id) : new Set();
+  const movedHeight = groupSubtreeHeight(currentGroup);
+  for (const group of proxyGroups) {
+    if (!group || excluded.has(group.id)) continue;
+    const depth = Number.isFinite(group.depth) ? group.depth : 1;
+    // Moving a subtree must keep every node within the three-level cap.
+    if (depth + movedHeight > 3) continue;
+    // A provider-specific tag group must stay under its own provider; an
+    // all-provider group may sit under any all-provider parent.
+    if (group.provider && group.provider !== provider) continue;
+    const option = document.createElement("option");
+    option.value = group.id;
+    option.textContent = `${treeIndent(group.depth)}${group.name}`;
+    select.append(option);
+  }
+  const wanted = currentGroup?.parentId || "";
+  select.value = [...select.options].some((option) => option.value === wanted) ? wanted : "";
+}
+
+// Tag names are immutable; the group dialog only chooses which tag qualifies
+// its members.
+function renderGroupTagSelect(current) {
+  const select = byId("group-tag");
+  if (!select) return;
+  select.textContent = "";
+  const none = document.createElement("option");
+  none.value = "";
+  none.textContent = text.groupTagNone;
+  select.append(none);
+  for (const tag of proxyTags) {
+    const option = document.createElement("option");
+    option.value = tag.name;
+    option.textContent = `${treeIndent(tag.depth)}${tag.name}`;
+    select.append(option);
+  }
+  if (current && !proxyTags.some((tag) => tag.name === current)) {
+    const option = document.createElement("option");
+    option.value = current;
+    option.textContent = current;
+    select.append(option);
+  }
+  select.value = current || "";
+  const hint = byId("group-tag-hint");
+  hint.textContent = proxyTags.length ? text.groupTagHint : text.groupTagEmptyHint;
 }
 
 function renderGroupMembers(group) {
@@ -4279,14 +4638,16 @@ function openGroupDialog(group = null) {
   groupContext = {
     mode: group ? "edit" : "create",
     id: group?.id || "",
+    group: group || null,
   };
   setGroupError("");
   byId("proxy-group-dialog-title").textContent = group ? text.groupTitleEdit : text.groupTitleNew;
   byId("group-name").value = group?.name || "";
   byId("group-mode").value = group?.mode === "tag" ? "tag" : "group";
-  byId("group-tag").value = group?.tag || "";
   byId("group-per-ip").value = String(group?.perIp || (group?.provider === "workbuddy" ? 5 : 2));
   renderGroupProviderSelect(group?.provider || "");
+  renderGroupTagSelect(group?.tag || "");
+  renderGroupParentSelect(byId("group-provider").value, group);
   renderGroupMembers(group);
   syncGroupModeFields();
   dialog.showModal();
@@ -4310,6 +4671,7 @@ function groupFormValues() {
     provider: byId("group-provider").value,
     mode: byId("group-mode").value === "tag" ? "tag" : "group",
     tag: byId("group-tag").value.trim(),
+    parentId: byId("group-parent").value || null,
     perIp: Number(byId("group-per-ip").value),
     proxyIds: [...byId("group-members").querySelectorAll('input[type="checkbox"]')]
       .filter((box) => box.checked)
@@ -4354,6 +4716,11 @@ async function saveGroup() {
       else proxyGroups = [...proxyGroups, saved];
       renderProxyGroups();
       renderSignInGroups?.();
+      // Depth-first order and tag usage counts are the service's to decide; a
+      // local splice keeps the dialog instant while the authoritative lists
+      // arrive right behind it.
+      void reloadProxyGroups();
+      void reloadTags();
     }
     save.disabled = false;
     closeGroupDialog();
@@ -4361,6 +4728,150 @@ async function saveGroup() {
     save.disabled = false;
     setGroupError(serverErrorText(error));
   }
+}
+
+// --- tag dialog -------------------------------------------------------------
+
+function setTagError(message) {
+  const node = byId("tag-error");
+  node.textContent = message || "";
+  node.hidden = !message;
+}
+
+function tagChildrenMap() {
+  const map = new Map();
+  for (const tag of proxyTags) {
+    const key = tag.parent || "";
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(tag);
+  }
+  return map;
+}
+
+function tagSubtreeNames(name) {
+  const children = tagChildrenMap();
+  const out = new Set([name]);
+  const queue = [name];
+  while (queue.length) {
+    const current = queue.shift();
+    for (const child of children.get(current) || []) {
+      if (out.has(child.name)) continue;
+      out.add(child.name);
+      queue.push(child.name);
+    }
+  }
+  return out;
+}
+
+function tagSubtreeHeight(name) {
+  if (!name) return 1;
+  const children = tagChildrenMap().get(name) || [];
+  if (!children.length) return 1;
+  return 1 + Math.max(...children.map((child) => tagSubtreeHeight(child.name)));
+}
+
+function renderTagParentSelect(tag) {
+  const select = byId("tag-parent");
+  select.textContent = "";
+  const top = document.createElement("option");
+  top.value = "";
+  top.textContent = text.tagParentTop;
+  select.append(top);
+  // A tag cannot become its own descendant; that would turn the tree into a
+  // loop and the service would refuse it anyway.
+  const excluded = tag ? tagSubtreeNames(tag.name) : new Set();
+  const movedHeight = tagSubtreeHeight(tag?.name);
+  for (const item of proxyTags) {
+    if (excluded.has(item.name)) continue;
+    // The tree is capped at three levels, so a deep subtree cannot move under
+    // a parent that would push it past the cap.
+    if ((Number.isFinite(item.depth) ? item.depth : 1) + movedHeight > 3) continue;
+    const option = document.createElement("option");
+    option.value = item.name;
+    option.textContent = `${treeIndent(item.depth)}${item.name}`;
+    select.append(option);
+  }
+  select.value = tag?.parent || "";
+}
+
+function openTagDialog(tag = null) {
+  const dialog = byId("tag-dialog");
+  if (dialog.open) return;
+  tagContext = { mode: tag ? "move" : "create", name: tag?.name || "" };
+  setTagError("");
+  byId("tag-dialog-title").textContent = tag ? text.tagTitleMove : text.tagTitleNew;
+  byId("tag-dialog-copy").textContent = tag
+    ? text.tagDialogMoveCopy.replace("{name}", tag.name)
+    : text.tagDialogCopy;
+  // Tag names are immutable; a move only chooses a new parent.
+  byId("tag-name-field").hidden = Boolean(tag);
+  byId("tag-name").value = tag?.name || "";
+  renderTagParentSelect(tag);
+  dialog.showModal();
+  if (tag) byId("tag-parent").focus();
+  else byId("tag-name").focus();
+}
+
+function closeTagDialog() {
+  const dialog = byId("tag-dialog");
+  if (dialog.open) dialog.close();
+  else cleanupTagDialog();
+}
+
+function cleanupTagDialog() {
+  tagContext = null;
+  setTagError("");
+  byId("tag-name").value = "";
+  byId("tag-name-field").hidden = false;
+}
+
+function tagErrorText(error) {
+  // Tag routes reuse the generic not_found code; the wording must say tag.
+  if (error?.code === "not_found") return text.errorTagNotFound;
+  return text[errorKeys[error?.code]] || serverErrorText(error);
+}
+
+async function saveTag() {
+  const current = tagContext;
+  if (!current) return;
+  const name = current.mode === "move" ? current.name : byId("tag-name").value.trim();
+  if (!name) {
+    setTagError(text.tagNameRequired);
+    byId("tag-name").focus();
+    return;
+  }
+  const save = byId("save-tag");
+  save.disabled = true;
+  setTagError("");
+  try {
+    const body = { parent: byId("tag-parent").value || null };
+    if (current.mode === "move") {
+      await api(`api/tags/${encodeURIComponent(current.name)}`, { method: "PATCH", body });
+    } else {
+      await api("api/tags", { method: "POST", body: { name, ...body } });
+    }
+    save.disabled = false;
+    closeTagDialog();
+    await reloadTags();
+    void reloadProxyGroups();
+  } catch (error) {
+    save.disabled = false;
+    setTagError(tagErrorText(error));
+  }
+}
+
+function askDeleteTag(tag) {
+  const dialog = byId("confirm-dialog");
+  if (dialog.open) return;
+  const target = confirmController.ask(tag.name, tag.name);
+  confirmKind = "tag";
+  pendingIdentity = null;
+  byId("confirm-title").textContent = text.tagDeleteTitle;
+  byId("confirm-copy").textContent = text.tagDeleteCopy.replace("{name}", target.name);
+  byId("confirm-action").textContent = text.deleteConfirm;
+  setConfirmError("");
+  setConfirmBusy(false);
+  dialog.showModal();
 }
 
 function showTestResult(result) {
@@ -4461,8 +4972,10 @@ async function saveProxy() {
     replaceProxy(saved);
     if (byId("proxy-dialog").open) closeProxyDialog();
     renderProxies();
-    // Tags decide tag-mode membership and a deleted IP leaves a group.
+    // Tags decide tag-mode membership and a deleted IP leaves a group. The
+    // service auto-registers new tag names, so its registry is the truth.
     reloadProxyGroups();
+    void reloadTags();
     // A dialog test checks the draft connection. After Save, run the real row
     // test so the list reflects the saved revision.
     if (testedValues && saved.status !== "ok") testRowProxy(saved.id);
@@ -4536,6 +5049,29 @@ async function confirmDelete() {
     if (account) await clearIdentity(account);
     return;
   }
+  if (confirmKind === "tag") {
+    deleting = true;
+    setConfirmBusy(true);
+    setConfirmError("");
+    try {
+      await api(`api/tags/${encodeURIComponent(target.id)}`, { method: "DELETE" });
+      confirmController.take(target.id);
+      deleting = false;
+      if (byId("confirm-dialog").open) byId("confirm-dialog").close();
+      else cleanupConfirmDialog();
+      await reloadTags();
+      void reloadProxyGroups();
+    } catch (error) {
+      deleting = false;
+      if (byId("confirm-dialog").open) {
+        setConfirmError(tagErrorText(error));
+        setConfirmBusy(false);
+      } else {
+        confirmController.cancel();
+      }
+    }
+    return;
+  }
   if (confirmKind === "group") {
     deleting = true;
     setConfirmBusy(true);
@@ -4549,6 +5085,8 @@ async function confirmDelete() {
       else cleanupConfirmDialog();
       renderProxyGroups();
       if (signInContext) renderSignInGroups();
+      void reloadProxyGroups();
+      void reloadTags();
     } catch (error) {
       deleting = false;
       if (byId("confirm-dialog").open) {
@@ -4573,6 +5111,7 @@ async function confirmDelete() {
     else cleanupConfirmDialog();
     renderProxies();
     reloadProxyGroups();
+    void reloadTags();
   } catch (error) {
     deleting = false;
     if (byId("confirm-dialog").open) {
@@ -5303,8 +5842,27 @@ byId("group-cancel").addEventListener("click", closeGroupDialog);
 byId("group-close").addEventListener("click", closeGroupDialog);
 byId("proxy-group-dialog").addEventListener("close", cleanupGroupDialog);
 byId("group-mode").addEventListener("change", syncGroupModeFields);
+byId("group-provider").addEventListener("change", () => {
+  renderGroupParentSelect(byId("group-provider").value, groupContext?.group || null);
+});
+// A child inherits a provider-specific parent's provider: the service rejects
+// an empty or different child provider. Keep the two pickers in step.
+byId("group-parent").addEventListener("change", () => {
+  const parent = proxyGroups.find((group) => group.id === byId("group-parent").value);
+  if (!parent?.provider) return;
+  byId("group-provider").value = parent.provider;
+  renderGroupParentSelect(parent.provider, groupContext?.group || null);
+  byId("group-parent").value = parent.id;
+});
 byId("save-group").addEventListener("click", () => {
   saveGroup();
+});
+byId("add-tag").addEventListener("click", () => openTagDialog());
+byId("tag-cancel").addEventListener("click", closeTagDialog);
+byId("tag-close").addEventListener("click", closeTagDialog);
+byId("tag-dialog").addEventListener("close", cleanupTagDialog);
+byId("save-tag").addEventListener("click", () => {
+  saveTag();
 });
 byId("signin-group").addEventListener("change", () => renderSignInProxies());
 byId("proxy-form").addEventListener("input", () => {
