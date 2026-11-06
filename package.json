@@ -1,6 +1,6 @@
 {
   "name": "login",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "私密登录 — proxy exits, isolated-browser sign-ins, account ledger and WorkBuddy credential import in one magpie plugin.",
   "license": "MIT",
   "author": "筱玖could (微信: xiao9-c)",

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="clean-login-token" content="__CLEAN_LOGIN_TOKEN__">
-  <title>Login</title>
+  <title>私密登录</title>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" type="module"></script>
   <script src="import.js" type="module"></script>
@@ -17,7 +17,7 @@
     <header class="header">
       <img class="brand-icon" src="assets/icon.svg" alt="">
       <div class="brand-copy">
-        <h1 id="page-title">Login</h1>
+        <h1 id="page-title">私密登录</h1>
         <p id="page-subtitle">Proxy exits, isolated sign-ins, one account ledger.</p>
       </div>
       <div class="header-status" id="header-status">
@@ -26,7 +26,7 @@
       </div>
     </header>
 
-    <nav class="tabs" role="tablist" aria-label="Login">
+    <nav class="tabs" role="tablist" aria-label="私密登录">
       <button class="tab is-active" id="tab-providers" type="button" role="tab"
         aria-selected="true" aria-controls="panel-providers">
         <span id="tab-providers-label">Providers</span>
@@ -54,10 +54,10 @@
         </div>
         <div class="setup-card" id="environment-setup" hidden>
           <div class="setup-head">
-            <h3 id="environment-title">Login browser setup</h3>
+            <h3 id="environment-title">私密登录 browser setup</h3>
             <span class="setup-badge" id="environment-badge">Not installed</span>
           </div>
-          <p class="setup-copy" id="environment-copy">Login needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.</p>
+          <p class="setup-copy" id="environment-copy">私密登录 needs a one-time isolated browser so sign-in pages never open in your everyday browser. Nothing is downloaded until you choose Prepare.</p>
           <dl class="setup-facts">
             <div>
               <dt id="environment-size-label">Download</dt>
@@ -144,6 +144,21 @@
           </div>
           <div class="proxy-group-list" id="proxy-group-list"></div>
         </div>
+        <div class="proxy-groups tag-panel" id="tag-panel">
+          <div class="proxy-groups-head">
+            <div>
+              <h3 id="tag-panel-title">Tags</h3>
+              <p class="field-hint" id="tag-panel-copy">Tags form a tree: a tag can have child tags, and a group can select every IP under a tag.</p>
+            </div>
+            <div class="section-actions">
+              <button class="button quiet" id="add-tag" type="button">
+                <span id="add-tag-label">New tag</span>
+              </button>
+            </div>
+          </div>
+          <p class="field-hint" id="tag-empty" hidden>No tags yet. Create one to group IPs by tag.</p>
+          <div class="tag-list" id="tag-list"></div>
+        </div>
         <div class="empty" id="proxies-empty">
           <img src="assets/icon.svg" alt="">
           <strong id="proxies-empty-title">No proxy IPs yet</strong>
@@ -192,7 +207,7 @@
         <div class="section-head">
           <div>
             <h2 id="accounts-title">Accounts</h2>
-            <p id="accounts-copy">Every account used with Login, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.</p>
+            <p id="accounts-copy">Every account used with 私密登录, its pinned browser fingerprint, and who.1ms.dog's verdict on that identity.</p>
           </div>
           <div class="section-actions">
             <button class="button" id="import-credential" type="button">导入凭据</button>
@@ -254,7 +269,7 @@
         <div class="empty" id="accounts-empty" hidden>
           <img src="assets/icon.svg" alt="">
           <strong id="accounts-empty-title">No accounts yet</strong>
-          <p id="accounts-empty-copy">Accounts appear here after a sign-in through Login.</p>
+          <p id="accounts-empty-copy">Accounts appear here after a sign-in through 私密登录.</p>
         </div>
       </section>
     </main>
@@ -372,10 +387,14 @@
             </select>
           </div>
         </div>
+        <div class="field">
+          <label for="group-parent" id="label-group-parent">Parent group</label>
+          <select id="group-parent"></select>
+          <p class="field-hint" id="group-parent-hint">Top level unless you nest it under another group; the tree is three levels deep at most.</p>
+        </div>
         <div class="field" id="group-tag-field" hidden>
           <label for="group-tag" id="label-group-tag">Tag</label>
-          <input id="group-tag" type="text" autocomplete="off" maxlength="32"
-            placeholder="claude">
+          <select id="group-tag"></select>
           <p class="field-hint" id="group-tag-hint">Every proxy carrying this tag is a member.</p>
         </div>
         <div class="field">
@@ -394,6 +413,35 @@
     <div class="dialog-footer">
       <button class="button quiet" id="group-cancel" type="button">Cancel</button>
       <button class="button primary" id="save-group" type="button">Save group</button>
+    </div>
+  </dialog>
+
+  <dialog id="tag-dialog" class="dialog">
+    <div class="dialog-head">
+      <div>
+        <h3 id="tag-dialog-title">New tag</h3>
+        <p id="tag-dialog-copy">A tag name is fixed once created; only its parent can change.</p>
+      </div>
+      <button class="dialog-close" id="tag-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <div class="field" id="tag-name-field">
+          <label for="tag-name" id="label-tag-name">Name</label>
+          <input id="tag-name" type="text" autocomplete="off" maxlength="32"
+            placeholder="claude">
+        </div>
+        <div class="field">
+          <label for="tag-parent" id="label-tag-parent">Parent tag</label>
+          <select id="tag-parent"></select>
+          <p class="field-hint" id="tag-parent-hint">A tag under another tag is a child; selecting the parent covers the whole subtree.</p>
+        </div>
+      </div>
+      <p class="form-error" id="tag-error" role="alert" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button" id="tag-cancel" type="button">Cancel</button>
+      <button class="button primary" id="save-tag" type="button">Save tag</button>
     </div>
   </dialog>
 
@@ -580,6 +628,18 @@
           <small id="import-provider-sub">CodeBuddy · copilot.tencent.com</small>
         </div>
         <span class="import-kind" id="import-kind">登录凭据 / API key</span>
+      </div>
+      <div class="form-row">
+        <div class="field" id="import-group-field">
+          <label for="import-group" id="import-group-label">IP group</label>
+          <select id="import-group"></select>
+          <p class="field-hint" id="import-group-hint">Pick a group to give this account an exit from its IP pool.</p>
+        </div>
+        <div class="field" id="import-proxy-field">
+          <label for="import-proxy" id="import-proxy-label">Proxy IP</label>
+          <select id="import-proxy"></select>
+          <p class="field-hint" id="import-proxy-hint">Leave it on automatic to let the group allocate its least-loaded IP.</p>
+        </div>
       </div>
       <div class="field">
         <label for="import-text" id="import-text-label">凭据</label>

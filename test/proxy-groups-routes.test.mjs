@@ -208,3 +208,175 @@ test("an explicit proxy outside the chosen group is refused", async () => {
   expect(res.status).toBe(400);
   expect(res.body.error).toBe("group_proxy_mismatch");
 });
+
+test("groups nest three levels, list depth-first and refuse to orphan children", async () => {
+  const rootRes = await api("POST", "/api/proxy-groups", {
+    name: "Tree root",
+    provider: "nesttree",
+    mode: "group",
+  });
+  expect(rootRes.status).toBe(201);
+  const root = rootRes.body.group;
+  expect(root.parentId).toBeNull();
+  expect(root.depth).toBe(1);
+  expect(root.childCount).toBe(0);
+
+  const childRes = await api("POST", "/api/proxy-groups", {
+    name: "Tree child",
+    provider: "nesttree",
+    mode: "group",
+    parentId: root.id,
+  });
+  expect(childRes.status).toBe(201);
+  const child = childRes.body.group;
+  expect(child.parentId).toBe(root.id);
+  expect(child.depth).toBe(2);
+
+  const grandRes = await api("POST", "/api/proxy-groups", {
+    name: "Tree grandchild",
+    provider: "nesttree",
+    mode: "group",
+    parentId: child.id,
+  });
+  expect(grandRes.status).toBe(201);
+  const grandchild = grandRes.body.group;
+  expect(grandchild.depth).toBe(3);
+
+  const fourth = await api("POST", "/api/proxy-groups", {
+    name: "Tree fourth",
+    provider: "nesttree",
+    mode: "group",
+    parentId: grandchild.id,
+  });
+  expect(fourth.status).toBe(400);
+  expect(fourth.body.error).toBe("invalid_parent");
+
+  const listed = await api("GET", "/api/proxy-groups");
+  const ids = listed.body.groups.map((group) => group.id);
+  expect(ids.indexOf(child.id)).toBe(ids.indexOf(root.id) + 1);
+  expect(ids.indexOf(grandchild.id)).toBe(ids.indexOf(child.id) + 1);
+  expect(listed.body.groups.find((group) => group.id === root.id).childCount).toBe(1);
+
+  const mismatch = await api("PATCH", `/api/proxy-groups/${child.id}`, { provider: "someone" });
+  expect(mismatch.status).toBe(400);
+  expect(mismatch.body.error).toBe("provider_mismatch");
+
+  const orphan = await api("DELETE", `/api/proxy-groups/${root.id}`);
+  expect(orphan.status).toBe(409);
+  expect(orphan.body.error).toBe("group_has_children");
+
+  const detached = await api("PATCH", `/api/proxy-groups/${child.id}`, { parentId: null });
+  expect(detached.status).toBe(200);
+  expect(detached.body.group.parentId).toBeNull();
+  expect(detached.body.group.depth).toBe(1);
+
+  expect((await api("DELETE", `/api/proxy-groups/${root.id}`)).status).toBe(200);
+  const after = await api("GET", `/api/proxy-groups/${grandchild.id}`);
+  expect(after.body.group.parentId).toBe(child.id);
+});
+
+test("tags are a tree: create, re-parent, and guarded deletes", async () => {
+  const created = await api("POST", "/api/tags", { name: "route-ai" });
+  expect(created.status).toBe(201);
+  expect(created.body.tag).toEqual({
+    name: "route-ai",
+    parent: null,
+    depth: 1,
+    childCount: 0,
+    proxyCount: 0,
+    groupCount: 0,
+  });
+
+  const child = await api("POST", "/api/tags", { name: "route-ai-pro", parent: "route-ai" });
+  expect(child.status).toBe(201);
+  expect(child.body.tag).toMatchObject({ name: "route-ai-pro", parent: "route-ai", depth: 2 });
+
+  const grandchild = await api("POST", "/api/tags", {
+    name: "route-ai-pro-max",
+    parent: "route-ai-pro",
+  });
+  expect(grandchild.status).toBe(201);
+  expect(grandchild.body.tag.depth).toBe(3);
+
+  const fourth = await api("POST", "/api/tags", {
+    name: "route-ai-pro-max-x",
+    parent: "route-ai-pro-max",
+  });
+  expect(fourth.status).toBe(400);
+  expect(fourth.body.error).toBe("invalid_parent");
+
+  const duplicate = await api("POST", "/api/tags", { name: "route-ai" });
+  expect(duplicate.status).toBe(409);
+  expect(duplicate.body.error).toBe("tag_exists");
+
+  const missingParent = await api("POST", "/api/tags", {
+    name: "route-lost",
+    parent: "route-none",
+  });
+  expect(missingParent.status).toBe(400);
+  expect(missingParent.body.error).toBe("invalid_parent");
+
+  const listed = await api("GET", "/api/tags");
+  const names = listed.body.tags.map((tag) => tag.name);
+  expect(names.indexOf("route-ai-pro")).toBe(names.indexOf("route-ai") + 1);
+  expect(names.indexOf("route-ai-pro-max")).toBe(names.indexOf("route-ai-pro") + 1);
+  expect(listed.body.tags.find((tag) => tag.name === "route-ai")).toMatchObject({
+    depth: 1,
+    childCount: 1,
+  });
+
+  const cycle = await api("PATCH", "/api/tags/route-ai", { parent: "route-ai-pro-max" });
+  expect(cycle.status).toBe(400);
+  expect(cycle.body.error).toBe("invalid_parent");
+
+  const withChildren = await api("DELETE", "/api/tags/route-ai");
+  expect(withChildren.status).toBe(409);
+  expect(withChildren.body.error).toBe("tag_in_use");
+
+  // A proxy carrying a tag protects it too, and dropping the tag releases it.
+  const tagged = await createProxy("Tagged proxy", "route-carried");
+  expect((await api("GET", "/api/tags")).body.tags.some((tag) => tag.name === "route-carried")).toBe(
+    true,
+  );
+  const carried = await api("DELETE", "/api/tags/route-carried");
+  expect(carried.status).toBe(409);
+  expect(carried.body.error).toBe("tag_in_use");
+  await api("PATCH", `/api/proxies/${tagged.id}`, { tags: "" });
+  expect((await api("DELETE", "/api/tags/route-carried")).status).toBe(204);
+
+  const reparented = await api("PATCH", "/api/tags/route-ai-pro", { parent: null });
+  expect(reparented.status).toBe(200);
+  expect(reparented.body.tag.parent).toBeNull();
+  expect(reparented.body.tag.depth).toBe(1);
+  expect((await api("DELETE", "/api/tags/route-ai")).status).toBe(204);
+});
+
+test("a tag-mode group's tag is registered and keeps the tag in use", async () => {
+  const created = await api("POST", "/api/proxy-groups", {
+    name: "Route tag rule",
+    mode: "tag",
+    tag: "route-group-tag",
+  });
+  expect(created.status).toBe(201);
+  const listed = await api("GET", "/api/tags");
+  expect(listed.body.tags).toContainEqual(
+    expect.objectContaining({ name: "route-group-tag", groupCount: 1 }),
+  );
+  const res = await api("DELETE", "/api/tags/route-group-tag");
+  expect(res.status).toBe(409);
+  expect(res.body.error).toBe("tag_in_use");
+});
+
+test("bootstrap carries the tag registry and a malformed tag path is a 400", async () => {
+  const bootstrap = await api("GET", "/api/bootstrap");
+  expect(bootstrap.status).toBe(200);
+  expect(Array.isArray(bootstrap.body.tags)).toBe(true);
+  expect(bootstrap.body.tags.length).toBeGreaterThan(0);
+  expect(bootstrap.body.tags[0]).toHaveProperty("depth");
+
+  const malformed = await fetch(`http://127.0.0.1:${service.port}/api/tags/%E0%A4%A`, {
+    headers: { [TOKEN_HEADER]: token },
+  });
+  expect(malformed.status).toBe(400);
+  expect((await malformed.json()).error).toBe("invalid_tag");
+});

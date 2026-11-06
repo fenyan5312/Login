@@ -964,9 +964,9 @@ button { cursor: pointer; }
 .proxy-groups-head h3 { margin: 0 0 4px; font-size: 12.5px; letter-spacing: 0.01em; }
 .proxy-groups-head .field-hint { margin: 0; }
 .proxy-group-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .proxy-group-card {
   display: flex;
@@ -978,8 +978,23 @@ button { cursor: pointer; }
   background: rgba(0, 0, 0, 0.14);
 }
 .proxy-group-name { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.proxy-group-name strong { font-size: 12px; color: var(--ink-1); }
+.proxy-group-name-main { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.proxy-group-name strong { font-size: 12px; color: var(--ink-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .proxy-group-name span { color: var(--ink-3); font: 500 9.5px/1 var(--mono); }
+.group-depth-badge,
+.tag-depth-badge {
+  flex: none;
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--ink-3);
+  font: 500 9.5px/1 var(--mono);
+}
+/* Indentation is the tree: every level moves right by one step and keeps the
+   same card, so a child is never mistaken for an unrelated top-level group. */
+.proxy-group-card.depth-1 { margin-left: 0; }
+.proxy-group-card.depth-2 { margin-left: 18px; }
+.proxy-group-card.depth-3 { margin-left: 36px; }
 .proxy-group-meta { display: flex; flex-wrap: wrap; gap: 4px; }
 .proxy-group-meta span {
   padding: 3px 6px;
@@ -1011,6 +1026,42 @@ button { cursor: pointer; }
 }
 .group-member { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 11.5px; }
 .group-member input { accent-color: var(--accent); }
+
+/* ---- tag registry --------------------------------------------------------- */
+
+.tag-panel { margin-top: 12px; }
+.tag-list { display: flex; flex-direction: column; gap: 6px; }
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+.tag-row.depth-1 { margin-left: 0; }
+.tag-row.depth-2 { margin-left: 18px; }
+.tag-row.depth-3 { margin-left: 36px; }
+.tag-row-name { display: flex; align-items: baseline; gap: 7px; min-width: 0; flex: 1 1 auto; }
+.tag-row-name strong {
+  color: var(--ink-1);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag-row-meta { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag-row-meta span {
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--ink-3);
+  font: 500 9.5px/1 var(--mono);
+}
+.tag-row-actions { display: flex; gap: 6px; margin-left: auto; flex: none; }
+:root[data-theme="light"] .proxy-group-card { background: rgba(255, 255, 255, 0.7); }
+:root[data-theme="light"] .tag-row { background: rgba(255, 255, 255, 0.7); }
 .account-group { display: block; margin-top: 3px; color: var(--ink-3); font-size: 10.5px; }
 .filter-range { display: flex; align-items: center; gap: 6px; }
 .filter-range-sep { color: var(--ink-3); }
@@ -1874,6 +1925,9 @@ button { cursor: pointer; }
   .section-head { flex-wrap: wrap; gap: 12px; }
   .section-actions { width: 100%; }
   .section-actions .button { flex: 1; }
+  .proxy-groups-head { flex-wrap: wrap; }
+  .proxy-groups-head .section-actions { width: auto; }
+  .proxy-groups-head .section-actions .button { flex: none; }
   .provider-grid { grid-template-columns: 1fr; }
   .proxy-filters { align-items: stretch; gap: 14px; }
   .filter-actions { margin-left: 0; width: 100%; justify-content: space-between; }
@@ -1918,6 +1972,14 @@ button { cursor: pointer; }
   .account-cell-fingerprint::before { content: ""; display: none; }
   .empty { min-height: 220px; padding: 28px 18px; }
   .form-row { grid-template-columns: 1fr; }
+  .tag-row { flex-wrap: wrap; }
+  .tag-row-actions { margin-left: 0; width: 100%; justify-content: flex-end; }
+  .proxy-group-card.depth-1,
+  .tag-row.depth-1 { margin-left: 0; }
+  .proxy-group-card.depth-2,
+  .tag-row.depth-2 { margin-left: 12px; }
+  .proxy-group-card.depth-3,
+  .tag-row.depth-3 { margin-left: 24px; }
   .dialog-head { padding: 18px 17px 0; }
   .dialog-body { padding: 15px 17px 17px; }
   .dialog-footer { margin: 0 17px; padding: 14px 0 18px; }
