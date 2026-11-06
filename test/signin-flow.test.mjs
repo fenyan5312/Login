@@ -17,6 +17,7 @@ import { SignInBrowserError } from "../lib/browser-launcher.mjs";
 import {
   SIGNIN_STATES,
   SignInFlowError,
+  authorizedFlowNeedsInput,
   chooseBrowserMethod,
   createSignInFlow,
 } from "../lib/signin-flow.mjs";
@@ -52,6 +53,22 @@ function success(over = {}) {
     expires: 1,
     accountId: "me",
     ...over,
+  };
+}
+
+// A provider that asks the user to paste the redirect URL / code back after
+// signing in in the isolated browser (Codex and Antigravity manual flows).
+function manualMethod(callback, over = {}) {
+  return {
+    type: "oauth",
+    label: "Provider account (browser)",
+    authorize: async () => ({
+      url: "https://provider/signin",
+      instructions: "Paste the redirect URL or the authorization code.",
+      method: "code",
+      callback,
+      ...over,
+    }),
   };
 }
 
@@ -106,6 +123,7 @@ test("the happy path pins the account and writes the result back", async () => {
     key: "workbuddy",
     url: "https://provider/signin",
     instructions: "go",
+    awaitingInput: false,
   });
   expect(state.launched.identity).toEqual({ tag: "pin" });
   expect(state.launched.profileDir).toBe(
@@ -468,4 +486,197 @@ test("the state list covers the whole lifecycle", () => {
     "error",
     "cancelled",
   ]);
+});
+
+// ---------------------------------------------------------------------------
+// system-browser suppression
+//
+// The provider plugins open the *default* browser inside authorize() on
+// Windows (Codex spawns `start`, Antigravity execs `start "" <url>`). The flow
+// hides the platform for that call so those windows never open; the isolated
+// browser is the only one the user sees. The host state must be intact again
+// after authorize() returns.
+
+test("authorize() runs with win32 hidden, and the host state is restored after it", async () => {
+  const platformBefore = process.platform;
+  const hadDisplay = Object.prototype.hasOwnProperty.call(process.env, "DISPLAY");
+  const displayBefore = process.env.DISPLAY;
+  let seen = null;
+  const methods = [
+    {
+      type: "oauth",
+      label: "Provider account (browser)",
+      authorize: async () => {
+        seen = { platform: process.platform, display: process.env.DISPLAY };
+        return {
+          url: "https://provider/signin",
+          instructions: "go",
+          method: "auto",
+          callback: async () => success(),
+        };
+      },
+    },
+  ];
+
+  const { controller } = await harness({ methods });
+  await controller.startSignIn({ provider: "workbuddy" });
+
+  // Windows is the only host where the override is needed (and active); every
+  // other host must see its real platform untouched.
+  if (platformBefore === "win32") {
+    expect(seen.platform).toBe("linux");
+    expect(typeof seen.display).toBe("string");
+    expect(seen.display).not.toBe("");
+  } else {
+    expect(seen.platform).toBe(platformBefore);
+  }
+  // Restored by the time startSignIn returns, i.e. before the callback runs.
+  expect(process.platform).toBe(platformBefore);
+  if (hadDisplay) expect(process.env.DISPLAY).toBe(displayBefore);
+  else expect(Object.prototype.hasOwnProperty.call(process.env, "DISPLAY")).toBe(false);
+
+  await controller.whenSettled();
+  expect(controller.status().state).toBe("done");
+});
+
+test("authorizedFlowNeedsInput separates paste-back flows from automatic ones", () => {
+  expect(authorizedFlowNeedsInput(null)).toBe(false);
+  expect(authorizedFlowNeedsInput({})).toBe(false);
+  expect(authorizedFlowNeedsInput({ method: "auto", callback: async () => {} })).toBe(false);
+  // A callback that declares a parameter receives the pasted value.
+  expect(authorizedFlowNeedsInput({ method: "auto", callback: async (input) => input })).toBe(true);
+  // Codex and Antigravity manual methods say so explicitly.
+  expect(authorizedFlowNeedsInput({ method: "code", callback: async () => {} })).toBe(true);
+});
+
+// ---------------------------------------------------------------------------
+// manual (paste-back) flows
+
+test("a manual flow waits for the pasted value instead of polling", async () => {
+  const inputs = [];
+  const { clientCalls, controller, state } = await harness({
+    methods: [
+      manualMethod(async (input) => {
+        inputs.push(input);
+        return success();
+      }),
+    ],
+  });
+
+  const started = await controller.startSignIn({ provider: "workbuddy" });
+  expect(started.awaitingInput).toBe(true);
+  expect(started.url).toBe("https://provider/signin");
+  // The isolated browser still opens; only the provider's own callback waits.
+  expect(state.launched.url).toBe("https://provider/signin");
+  expect(inputs).toHaveLength(0);
+
+  const flow = controller.status();
+  expect(flow.state).toBe("waiting-login");
+  expect(flow.awaitingInput).toBe(true);
+  // Give the flow a beat: nothing may settle before the user acts.
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  expect(controller.status().state).toBe("waiting-login");
+  expect(inputs).toHaveLength(0);
+
+  const completed = await controller.complete("  https://provider/callback?code=abc  ");
+  expect(completed.flow.state).toBe("finishing");
+  expect(completed.flow.awaitingInput).toBe(false);
+
+  await controller.whenSettled();
+  expect(controller.status().state).toBe("done");
+  // The value reaches the provider callback trimmed, once.
+  expect(inputs).toEqual(["https://provider/callback?code=abc"]);
+  expect(clientCalls).toHaveLength(1);
+  expect(clientCalls[0].body.access).toBe("A");
+});
+
+test("a manual flow rejects an empty, oversized or repeated completion", async () => {
+  const inputs = [];
+  const { controller } = await harness({
+    methods: [manualMethod(async (input) => {
+      inputs.push(input);
+      return success();
+    })],
+  });
+  await controller.startSignIn({ provider: "workbuddy" });
+
+  await expect(controller.complete("")).rejects.toMatchObject({ code: "input_required", status: 400 });
+  await expect(controller.complete("   ")).rejects.toMatchObject({ code: "input_required" });
+  await expect(controller.complete(42)).rejects.toMatchObject({ code: "input_required" });
+  await expect(controller.complete("x".repeat(8193))).rejects.toMatchObject({
+    code: "input_too_large",
+    status: 413,
+  });
+  expect(inputs).toHaveLength(0);
+  // Still waiting: none of the rejected attempts consumed the flow.
+  expect(controller.status().state).toBe("waiting-login");
+  expect(controller.status().awaitingInput).toBe(true);
+
+  await controller.complete("code-1");
+  // A second completion finds no waiting input.
+  await expect(controller.complete("code-2")).rejects.toMatchObject({ code: "not_awaiting_input" });
+  await controller.whenSettled();
+  expect(inputs).toEqual(["code-1"]);
+  expect(controller.status().state).toBe("done");
+});
+
+test("complete() has nothing to do for an automatic flow", async () => {
+  const { controller } = await harness();
+  await controller.startSignIn({ provider: "workbuddy" });
+  await expect(controller.complete("code")).rejects.toMatchObject({ code: "not_awaiting_input" });
+  await controller.whenSettled();
+  expect(controller.status().state).toBe("done");
+});
+
+test("complete() without a flow is a clear 404", async () => {
+  const { controller } = await harness();
+  await expect(controller.complete("code")).rejects.toMatchObject({ code: "no_flow", status: 404 });
+});
+
+test("cancelling a manual flow never runs the provider callback", async () => {
+  let called = 0;
+  const { clientCalls, controller } = await harness({
+    methods: [manualMethod(async () => {
+      called += 1;
+      return success();
+    })],
+  });
+  await controller.startSignIn({ provider: "workbuddy" });
+  expect(controller.status().awaitingInput).toBe(true);
+
+  await controller.cancel();
+  await controller.whenSettled();
+  expect(controller.status().state).toBe("cancelled");
+  expect(controller.status().awaitingInput).toBe(false);
+  expect(called).toBe(0);
+  expect(clientCalls).toHaveLength(0);
+  // An arriving completion after cancel is refused.
+  await expect(controller.complete("late")).rejects.toMatchObject({ code: "no_flow" });
+});
+
+test("a callback that declares an argument also waits for the pasted value", async () => {
+  const inputs = [];
+  const { controller } = await harness({
+    // No explicit method:"code": the declared parameter is the signal.
+    methods: [
+      {
+        type: "oauth",
+        label: "Provider account (browser)",
+        authorize: async () => ({
+          url: "https://provider/signin",
+          instructions: "go",
+          callback: async (input) => {
+            inputs.push(input);
+            return success();
+          },
+        }),
+      },
+    ],
+  });
+  const started = await controller.startSignIn({ provider: "workbuddy" });
+  expect(started.awaitingInput).toBe(true);
+  await controller.complete("code-9");
+  await controller.whenSettled();
+  expect(inputs).toEqual(["code-9"]);
+  expect(controller.status().state).toBe("done");
 });

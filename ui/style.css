@@ -1582,6 +1582,7 @@ button { cursor: pointer; }
 
 .signin-provider { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
 .signin-unverified { margin: 0 0 12px; color: var(--warn); font-size: 11.5px; line-height: 1.5; }
+.signin-instructions { margin: 0 0 12px; color: var(--ink-2); font-size: 11.5px; line-height: 1.55; }
 .signin-notice { margin: 0 0 10px; color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
 .signin-status {
   display: flex;

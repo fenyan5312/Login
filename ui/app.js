@@ -128,6 +128,10 @@ const messages = {
     signInStateDone: "Done",
     signInStateError: "Failed",
     signInStateCancelled: "Cancelled",
+    signInInputLabel: "Redirect URL or authorization code",
+    signInInputHint: "After signing in, copy the address the browser was sent to (or the code the page shows) and paste it here.",
+    signInComplete: "Finish sign-in",
+    signInInputRequired: "Paste the redirect URL or the authorization code first.",
     signInAccountKey: "Account key",
     signInAccountLabel: "Continue with an existing identity",
     signInAccountHint: "This identity keeps its own browser fingerprint. Continuing reuses it instead of drawing a new one.",
@@ -490,6 +494,10 @@ const messages = {
     signInStateDone: "已完成",
     signInStateError: "失败",
     signInStateCancelled: "已取消",
+    signInInputLabel: "回调地址或授权码",
+    signInInputHint: "登录完成后，把浏览器跳转到的地址（或页面上显示的授权码）复制到这里。",
+    signInComplete: "完成登录",
+    signInInputRequired: "请先粘贴回调地址或授权码。",
     signInAccountKey: "账号键",
     signInAccountLabel: "沿用已有身份继续登录",
     signInAccountHint: "该身份保留自己的浏览器指纹。沿用时会重用该指纹，而不是重新生成。",
@@ -852,6 +860,10 @@ const messages = {
     signInStateDone: "已完成",
     signInStateError: "失敗",
     signInStateCancelled: "已取消",
+    signInInputLabel: "回呼網址或授權碼",
+    signInInputHint: "登入完成後，把瀏覽器跳轉到的網址（或頁面上顯示的授權碼）貼到這裡。",
+    signInComplete: "完成登入",
+    signInInputRequired: "請先貼上回呼網址或授權碼。",
     signInAccountKey: "帳號金鑰",
     signInAccountLabel: "沿用現有身分繼續登入",
     signInAccountHint: "這個身分保留自己的瀏覽器指紋。沿用時會重用該指紋，而不是重新產生。",
@@ -1214,6 +1226,10 @@ const messages = {
     signInStateDone: "完了",
     signInStateError: "失敗",
     signInStateCancelled: "キャンセル済み",
+    signInInputLabel: "リダイレクト URL または認証コード",
+    signInInputHint: "ログイン後、ブラウザーが遷移した URL（または画面に表示された認証コード）をここに貼り付けてください。",
+    signInComplete: "ログインを完了",
+    signInInputRequired: "先にリダイレクト URL または認証コードを貼り付けてください。",
     signInAccountKey: "アカウントキー",
     signInAccountLabel: "既存のIDでログインを継続",
     signInAccountHint: "このIDは独自のブラウザ指紋を保持します。継続すると新しい指紋ではなく同じ指紋が使われます。",
@@ -1753,6 +1769,9 @@ function applyText() {
   byId("signin-method-label").textContent = text.signInMethodLabel;
   byId("signin-start").textContent = text.signInStart;
   byId("signin-cancel").textContent = text.signInCancel;
+  byId("signin-complete").textContent = text.signInComplete;
+  byId("signin-input-label").textContent = text.signInInputLabel;
+  byId("signin-input-hint").textContent = text.signInInputHint;
   byId("signin-close").setAttribute("aria-label", text.signInClose);
   byId("signin-close-footer").textContent = text.signInClose;
   byId("report-title").textContent = text.reportTitle;
@@ -2891,6 +2910,18 @@ function renderSignIn() {
   byId("signin-start").textContent = context.busy ? text.signInStarting : text.signInStart;
   byId("signin-cancel").hidden = !active;
   byId("signin-cancel").disabled = context.busy;
+
+  // A manual provider flow (the redirect URL/code is pasted back) needs its
+  // own input and a done action. Automatic flows complete by themselves and
+  // never show these.
+  const awaiting = Boolean(flow?.awaitingInput);
+  byId("signin-input-field").hidden = !awaiting;
+  byId("signin-complete").hidden = !awaiting;
+  byId("signin-complete").disabled = context.busy;
+  const instructions = typeof flow?.instructions === "string" ? flow.instructions : "";
+  const instructionsNode = byId("signin-instructions");
+  instructionsNode.hidden = !instructions;
+  instructionsNode.textContent = instructions;
 }
 
 function renderSignInProxies() {
@@ -3108,7 +3139,7 @@ async function startSignIn() {
   setSignInNotice("");
   renderSignIn();
   try {
-    await api("api/signin", {
+    const started = await api("api/signin", {
       method: "POST",
       body: signInPayload(
         context.provider,
@@ -3120,7 +3151,13 @@ async function startSignIn() {
     if (signInContext !== context) return;
     context.busy = false;
     // startSignIn answers only after the browser window is open.
-    context.flow = { state: "waiting-login", accountKey: null };
+    context.flow = {
+      state: "waiting-login",
+      accountKey: null,
+      url: typeof started?.url === "string" ? started.url : "",
+      instructions: typeof started?.instructions === "string" ? started.instructions : "",
+      awaitingInput: Boolean(started?.awaitingInput),
+    };
     setSignInNotice(text.signInOpened);
     renderSignIn();
     startSignInPolling();
@@ -3180,6 +3217,36 @@ async function cancelSignIn() {
   }
 }
 
+async function completeSignIn() {
+  const context = signInContext;
+  if (!context || context.busy) return;
+  const value = byId("signin-input").value.trim();
+  if (!value) {
+    setSignInError(text.signInInputRequired);
+    return;
+  }
+  context.busy = true;
+  setSignInError("");
+  renderSignIn();
+  try {
+    const data = await api("api/signin/complete", {
+      method: "POST",
+      body: { text: value },
+    });
+    if (signInContext !== context) return;
+    context.busy = false;
+    if (data?.flow) context.flow = data.flow;
+    byId("signin-input").value = "";
+    renderSignIn();
+    startSignInPolling();
+  } catch (error) {
+    if (signInContext !== context) return;
+    context.busy = false;
+    setSignInError(serverErrorText(error));
+    renderSignIn();
+  }
+}
+
 function cleanupSignInDialog() {
   stopSignInPolling();
   signInContext = null;
@@ -3188,6 +3255,11 @@ function cleanupSignInDialog() {
   byId("signin-result").hidden = true;
   byId("signin-result-key").textContent = "";
   byId("signin-status").hidden = true;
+  byId("signin-input").value = "";
+  byId("signin-input-field").hidden = true;
+  byId("signin-complete").hidden = true;
+  byId("signin-instructions").hidden = true;
+  byId("signin-instructions").textContent = "";
 }
 
 function closeSignInDialog() {
@@ -4777,6 +4849,7 @@ byId("environment-prepare").addEventListener("click", prepareEnvironment);
 byId("environment-cancel").addEventListener("click", cancelEnvironment);
 byId("environment-retry").addEventListener("click", prepareEnvironment);
 byId("signin-start").addEventListener("click", startSignIn);
+byId("signin-complete").addEventListener("click", completeSignIn);
 byId("signin-cancel").addEventListener("click", cancelSignIn);
 byId("identities-retry").addEventListener("click", loadAccountIdentities);
 byId("signin-close").addEventListener("click", closeSignInDialog);

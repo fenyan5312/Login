@@ -150,3 +150,48 @@ test("signInActive and signInSettled partition the state machine", () => {
     expect(signInSettled(state)).toBe(false);
   }
 });
+
+// A manual provider flow (Codex / Antigravity paste-back) must end with a real
+// action: the dialog shows the provider's instructions, a text box and a
+// "finish" button, and the button posts the value to the service.
+test("a manual flow gets a paste box and a finish button", () => {
+  const dialog = /<dialog id="signin-dialog"[\s\S]*?<\/dialog>/.exec(html)?.[0] || "";
+  expect(dialog).toContain('id="signin-instructions"');
+  expect(dialog).toContain('id="signin-input-field"');
+  expect(dialog).toContain('id="signin-input"');
+  expect(dialog).toContain('id="signin-input-label"');
+  expect(dialog).toContain('id="signin-input-hint"');
+  expect(dialog).toContain('id="signin-complete"');
+  // Hidden until the service says the flow is waiting for input.
+  expect(dialog).toMatch(/<div class="field" id="signin-input-field" hidden>/);
+  expect(dialog).toMatch(/<button[^>]*id="signin-complete"[^>]*hidden>/);
+  expect(dialog).toMatch(/<button[^>]*id="signin-complete"[^>]*type="button"/);
+  // The instructions paragraph is text, never HTML.
+  expect(app).toContain('instructionsNode.textContent = instructions;');
+
+  // The input and the button appear exactly when the flow says it waits.
+  const rendered = /function renderSignIn\(\) \{[\s\S]*?\n\}/.exec(app)?.[0] || "";
+  expect(rendered).toContain("flow?.awaitingInput");
+  expect(rendered).toContain('byId("signin-input-field").hidden = !awaiting');
+  expect(rendered).toContain('byId("signin-complete").hidden = !awaiting');
+
+  // The completion action posts the trimmed value and resumes polling.
+  const complete = /async function completeSignIn\(\) \{[\s\S]*?\n\}/.exec(app)?.[0] || "";
+  expect(complete).toContain('byId("signin-input").value.trim()');
+  expect(complete).toContain('api("api/signin/complete", {');
+  expect(complete).toContain("text: value");
+  expect(complete).toContain("startSignInPolling()");
+  expect(app).toContain('byId("signin-complete").addEventListener("click", completeSignIn)');
+  // An empty box never posts.
+  expect(complete).toContain("if (!value)");
+  expect(complete).toContain("text.signInInputRequired");
+});
+
+test("the paste-back strings exist in every supported language", () => {
+  for (const key of ["signInInputLabel", "signInInputHint", "signInComplete", "signInInputRequired"]) {
+    expect((app.match(new RegExp(`\\b${key}:`, "g")) || []).length).toBeGreaterThanOrEqual(4);
+  }
+  expect(app).toContain('byId("signin-complete").textContent = text.signInComplete');
+  expect(app).toContain('byId("signin-input-label").textContent = text.signInInputLabel');
+  expect(app).toContain('byId("signin-input-hint").textContent = text.signInInputHint');
+});

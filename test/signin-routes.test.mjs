@@ -11,6 +11,7 @@ const tmp = mkdtempSync(join(tmpdir(), "clean-login-signin-routes-"));
 let service;
 let token;
 let lastStart = null;
+let lastComplete = null;
 
 const flow = {
   flowId: "flow-1",
@@ -46,6 +47,15 @@ const signIn = {
     };
   },
   status: () => flow,
+  async complete(text) {
+    lastComplete = text;
+    if (text === "") {
+      throw new SignInFlowError("input_required", "Paste the redirect URL first.", 400);
+    }
+    return {
+      flow: { ...flow, state: "finishing", awaitingInput: false },
+    };
+  },
   async cancel() {
     return { cancelled: true, flow: { ...flow, state: "cancelled" } };
   },
@@ -227,6 +237,34 @@ test("GET /api/signin carries the navigation warning without changing the route 
   expect((await res.json()).flow.warning).toEqual(flow.warning);
 });
 
+test("POST /api/signin/complete hands the pasted value to the flow", async () => {
+  lastComplete = null;
+  const res = await api("POST", "/api/signin/complete", {
+    text: "https://provider/callback?code=abc",
+  });
+  expect(res.status).toBe(200);
+  expect(lastComplete).toBe("https://provider/callback?code=abc");
+  expect((await res.json()).flow).toMatchObject({ state: "finishing", awaitingInput: false });
+});
+
+test("POST /api/signin/complete accepts an empty body and reports its own error", async () => {
+  lastComplete = null;
+  const res = await api("POST", "/api/signin/complete", {});
+  expect(lastComplete).toBe("");
+  expect(res.status).toBe(400);
+  expect(await res.json()).toEqual({
+    error: "input_required",
+    message: "Paste the redirect URL first.",
+  });
+});
+
+test("POST /api/signin/complete tolerates no body at all", async () => {
+  lastComplete = null;
+  const res = await api("POST", "/api/signin/complete");
+  expect(res.status).toBe(400);
+  expect(lastComplete).toBe("");
+});
+
 test("POST /api/signin/cancel cancels and returns the new state", async () => {
   const res = await api("POST", "/api/signin/cancel");
   expect(res.status).toBe(200);
@@ -237,6 +275,7 @@ test("the sign-in routes require the page token", async () => {
   for (const [method, path] of [
     ["GET", "/api/signin"],
     ["POST", "/api/signin"],
+    ["POST", "/api/signin/complete"],
     ["POST", "/api/signin/cancel"],
   ]) {
     const res = await api(method, path, method === "POST" ? { provider: "workbuddy" } : undefined, {
@@ -250,6 +289,7 @@ test("the sign-in routes reject other methods", async () => {
   for (const [method, path, allow] of [
     ["PUT", "/api/signin", "GET, POST"],
     ["GET", "/api/signin/cancel", "POST"],
+    ["GET", "/api/signin/complete", "POST"],
   ]) {
     const res = await api(method, path);
     expect(res.status).toBe(405);

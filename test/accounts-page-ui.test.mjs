@@ -19,7 +19,7 @@ const buttonIds = [
   "environment-retry", "filter-reset", "score-cancel", "proxy-close",
   "test-proxy", "proxy-cancel", "save-proxy", "confirm-close", "confirm-cancel",
   "confirm-action", "signin-close", "signin-cancel", "signin-close-footer",
-  "signin-start", "identities-retry", "accounts-refresh",
+  "signin-start", "signin-complete", "identities-retry", "accounts-refresh",
   "account-filter-all", "account-filter-signed-in", "account-filter-signed-out",
   "account-detail-close", "account-detail-dismiss", "account-detail-check",
   "account-detail-note-save", "account-check-close", "account-check-dismiss",
