@@ -124,6 +124,8 @@ test("the happy path pins the account and writes the result back", async () => {
     url: "https://provider/signin",
     instructions: "go",
     awaitingInput: false,
+    proxyGroupId: null,
+    proxyGroupName: "",
   });
   expect(state.launched.identity).toEqual({ tag: "pin" });
   expect(state.launched.profileDir).toBe(
@@ -679,4 +681,33 @@ test("a callback that declares an argument also waits for the pasted value", asy
   await controller.whenSettled();
   expect(inputs).toEqual(["code-9"]);
   expect(controller.status().state).toBe("done");
+});
+
+// The account ledger's group binding: an exit chosen by a group is recorded
+// beside the exit snapshot, and a later sign-in that names no group keeps it.
+test("a sign-in records the IP group it was allocated from and keeps it on re-login", async () => {
+  const { env, controller } = await harness();
+  const dir = accountDir(env, "workbuddy", "workbuddy");
+  const started = await controller.startSignIn({
+    provider: "workbuddy",
+    proxy: { id: "p-1", type: "http", host: "127.0.0.1", port: 8080, name: "SG 01", region: "新加坡" },
+    proxyMeta: { id: "p-1", name: "SG 01", region: "新加坡", type: "http" },
+    proxyGroup: { id: "g-1", name: "WorkBuddy 5/IP" },
+  });
+  expect(started.proxyGroupId).toBe("g-1");
+  expect(started.proxyGroupName).toBe("WorkBuddy 5/IP");
+  await controller.whenSettled();
+  let meta = await readAccountMeta(dir);
+  expect(meta.proxyGroupId).toBe("g-1");
+  expect(meta.proxyGroupName).toBe("WorkBuddy 5/IP");
+  expect(meta.lastLogin.proxyId).toBe("p-1");
+
+  // Re-login without naming a group: the binding stays.
+  await controller.startSignIn({ provider: "workbuddy", account: { key: "workbuddy" } });
+  await controller.whenSettled();
+  meta = await readAccountMeta(dir);
+  expect(meta.proxyGroupId).toBe("g-1");
+  expect(meta.proxyGroupName).toBe("WorkBuddy 5/IP");
+  // The group name is not a credential and never reaches the public status.
+  expect(JSON.stringify(controller.status())).not.toContain("password");
 });

@@ -30,6 +30,8 @@ export function accountView(account) {
     : checks[0] || null;
   const note = typeof value.note === "string" ? value.note : "";
   const unverified = Boolean(value.unverified);
+  const proxyGroupId = typeof value.proxyGroupId === "string" ? value.proxyGroupId : "";
+  const proxyGroupName = typeof value.proxyGroupName === "string" ? value.proxyGroupName : "";
 
   return {
     name,
@@ -45,6 +47,8 @@ export function accountView(account) {
     checks,
     note,
     unverified,
+    proxyGroupId,
+    proxyGroupName,
   };
 }
 
@@ -109,6 +113,8 @@ export function filterAccounts(accounts, { query = "", filter = "all" } = {}) {
       view.providerLabel,
       view.note,
       view.fingerprint.id,
+      view.proxyGroupName,
+      view.proxyGroupId,
       formatExit(view.lastLogin, ""),
     ]
       .filter(Boolean)

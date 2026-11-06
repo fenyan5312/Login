@@ -950,6 +950,68 @@ button { cursor: pointer; }
   border-color: rgba(91, 214, 255, 0.3);
 }
 .filter-chip-count { font: 600 10px/1 var(--mono); opacity: 0.8; }
+
+/* ---- IP groups ------------------------------------------------------------ */
+
+.proxy-groups {
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.018);
+}
+.proxy-groups-head { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+.proxy-groups-head h3 { margin: 0 0 4px; font-size: 12.5px; letter-spacing: 0.01em; }
+.proxy-groups-head .field-hint { margin: 0; }
+.proxy-group-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+.proxy-group-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.14);
+}
+.proxy-group-name { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.proxy-group-name strong { font-size: 12px; color: var(--ink-1); }
+.proxy-group-name span { color: var(--ink-3); font: 500 9.5px/1 var(--mono); }
+.proxy-group-meta { display: flex; flex-wrap: wrap; gap: 4px; }
+.proxy-group-meta span {
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--ink-3);
+  font: 500 9.5px/1 var(--mono);
+}
+.proxy-group-load { color: var(--ink-2); font-size: 11px; }
+.proxy-group-load strong { color: var(--ink-1); font-weight: 600; }
+.proxy-group-actions { display: flex; gap: 6px; margin-top: 2px; }
+.proxy-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.proxy-tag {
+  padding: 3px 5px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--ink-3);
+  font: 500 9.5px/1 var(--mono);
+}
+.group-members {
+  display: grid;
+  gap: 7px;
+  max-height: 190px;
+  overflow: auto;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+}
+.group-member { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 11.5px; }
+.group-member input { accent-color: var(--accent); }
+.account-group { display: block; margin-top: 3px; color: var(--ink-3); font-size: 10.5px; }
 .filter-range { display: flex; align-items: center; gap: 6px; }
 .filter-range-sep { color: var(--ink-3); }
 .filter-input {

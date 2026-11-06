@@ -13,28 +13,28 @@
 (() => {
   const messages = {
     en: {
-      title: "Login",
+      title: "私密登录",
       connecting: "Connecting to the local service…",
       failed: "The local service did not answer.",
       retry: "Try again",
       remote: "This page's service runs only on the computer that runs magpie.",
     },
     "zh-Hans": {
-      title: "Login",
+      title: "私密登录",
       connecting: "正在连接本地服务…",
       failed: "本地服务没有响应。",
       retry: "重试",
       remote: "此页面的服务只在运行 magpie 的电脑上可用。",
     },
     "zh-Hant": {
-      title: "Login",
+      title: "私密登录",
       connecting: "正在連線至本機服務…",
       failed: "本機服務沒有回應。",
       retry: "重試",
       remote: "此頁面的服務只在執行 magpie 的電腦上可用。",
     },
     ja: {
-      title: "Login",
+      title: "私密登录",
       connecting: "ローカルサービスに接続しています…",
       failed: "ローカルサービスから応答がありません。",
       retry: "再試行",
@@ -45,7 +45,7 @@
   let text = messages.en;
 
   function languageOf(lang) {
-    const parts = String(lang || "en").toLowerCase().replaceAll("_", "-").split("-");
+    const parts = String(lang || "zh-Hans").toLowerCase().replaceAll("_", "-").split("-");
     if (parts[0] === "zh") {
       return parts.includes("hant") ||
         (!parts.includes("hans") && parts.some((part) => ["tw", "hk", "mo"].includes(part)))

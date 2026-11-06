@@ -154,6 +154,8 @@ test("accountExtras gives defaults for a bare ledger", () => {
     loginHistory: [],
     lastCheck: null,
     checks: [],
+    proxyGroupId: null,
+    proxyGroupName: "",
   });
   expect(accountExtras({ version: 1, key: "k" })).toEqual({
     note: "",
@@ -161,6 +163,8 @@ test("accountExtras gives defaults for a bare ledger", () => {
     loginHistory: [],
     lastCheck: null,
     checks: [],
+    proxyGroupId: null,
+    proxyGroupName: "",
   });
 });
 

@@ -87,6 +87,8 @@ test("GET /api/accounts lists the ledger fields and the signed-in flag", async (
     lastCheck: null,
     checks: [],
     fingerprint: { id: null, pinnedAt: null },
+    proxyGroupId: null,
+    proxyGroupName: "",
   };
   expect(body.accounts).toEqual([
     {

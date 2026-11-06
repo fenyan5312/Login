@@ -9,6 +9,7 @@ export function normalizeProxyForm(values = {}) {
     port: String(values.port ?? "").trim(),
     username: String(values.username ?? "").trim(),
     password: String(values.password ?? ""),
+    tags: String(values.tags ?? "").trim(),
   };
 }
 

@@ -195,3 +195,34 @@ test("the paste-back strings exist in every supported language", () => {
   expect(app).toContain('byId("signin-input-label").textContent = text.signInInputLabel');
   expect(app).toContain('byId("signin-input-hint").textContent = text.signInInputHint');
 });
+
+test("the dialog offers an IP group picker, and the chosen group travels with the request", () => {
+  const dialog = /<dialog id="signin-dialog"[\s\S]*?<\/dialog>/.exec(html)?.[0] || "";
+  expect(dialog).toContain('id="signin-group-field"');
+  expect(dialog).toContain('id="signin-group"');
+  expect(dialog).toContain('id="signin-group-hint"');
+  expect(html).toContain('id="signin-group-label"');
+
+  // The picker is filled from the bootstrap group list; each option shows the
+  // group's per-IP cap so the rule is visible before signing in.
+  expect(app).toContain("function renderSignInGroups()");
+  expect(app).toContain('select.value = scoped.length === 1 ? scoped[0].id : ""');
+  expect(app).toContain('byId("signin-group").addEventListener("change", () => renderSignInProxies())');
+  // Only a group's members are offered when a group is selected; the empty
+  // option becomes "let the group allocate", not "direct".
+  expect(app).toContain("text.signInProxyGroupAuto");
+
+  expect(signInPayload("workbuddy", null, null, null, " grp-1 ")).toEqual({
+    provider: "workbuddy",
+    proxy: null,
+    groupId: "grp-1",
+  });
+  expect(signInPayload("workbuddy", null, null, null, "")).toEqual({
+    provider: "workbuddy",
+    proxy: null,
+  });
+  expect(signInPayload("workbuddy", null, null, null, null)).toEqual({
+    provider: "workbuddy",
+    proxy: null,
+  });
+});
