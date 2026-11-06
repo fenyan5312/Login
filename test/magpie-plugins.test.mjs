@@ -307,6 +307,34 @@ export const F = async () => ({ auth: { provider: "evil", methods: [] } });\n`,
   }
 });
 
+// A declared package's `main` is still untrusted: it must not resolve to a
+// file outside that package (`../../escape.mjs`).
+test("a package main that escapes its own directory is not imported", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "clean-login-escape-"));
+  try {
+    const root = join(dir, "plugins", "node_modules");
+    const pkgDir = join(root, "escape-plugin");
+    mkdirSync(pkgDir, { recursive: true });
+    writeFileSync(
+      join(pkgDir, "package.json"),
+      JSON.stringify({ name: "escape-plugin", type: "module", main: "../../escape.mjs" }),
+    );
+    writeFileSync(
+      join(dir, "plugins", "escape.mjs"),
+      `export const F = async () => ({ auth: { provider: "escaped", methods: [] } });\n`,
+    );
+    writeFileSync(
+      join(dir, "plugins", "package.json"),
+      JSON.stringify({ name: "magpie-plugins", private: true, dependencies: { "escape-plugin": "*" } }),
+    );
+    const scan = await scanMagpiePlugins({ env: { MAGPIE_CONFIG_DIR: dir }, timeoutMs: 8000 });
+    expect(scan.available).toBe(true);
+    expect(scan.providers).toEqual([]);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 // Regression: the per-package loop used to read `dirent`, which only exists in
 // the scope loop's inner block, so a package.json WITHOUT a `name` threw a
 // ReferenceError inside the child. That took the whole scan down: the parent

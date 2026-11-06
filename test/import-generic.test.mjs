@@ -1,10 +1,12 @@
 import { describe, expect, test } from "bun:test";
+import { createHash } from "node:crypto";
 import { prepareGenericImport, normalizeProviderId } from "../lib/import-generic.mjs";
 import { ImportError } from "../lib/import-credential.mjs";
 
 const KEY = "sk-live-abcdefghijklmnop";
 const ACCESS = "ya29.abcdefghijklmnopqrstuvwxyz";
 const REFRESH = "1//refresh-abcdefghijklmnop";
+const FINGERPRINT = createHash("sha256").update(KEY).digest("hex").slice(0, 8);
 
 function fails(fn, code) {
   try {
@@ -34,8 +36,8 @@ describe("prepareGenericImport", () => {
     expect(prepared.body).toEqual({
       type: "api",
       key: KEY,
-      accountId: `API key …${KEY.slice(-4)}`,
-      uid: `key_${KEY.slice(-4)}`,
+      accountId: `API key …${FINGERPRINT}`,
+      uid: `key_${FINGERPRINT}`,
     });
     // Nothing but the typed fields ever travels to magpie.
     expect(Object.keys(prepared.body).sort()).toEqual(["accountId", "key", "type", "uid"]);

@@ -2,6 +2,7 @@
 // token, and only the typed fields reach magpie's account store. A fake client
 // records what would have been written; nothing leaves the temp directory.
 import { afterAll, beforeAll, expect, test } from "bun:test";
+import { createHash } from "node:crypto";
 import { mkdtempSync, rmSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -12,6 +13,7 @@ const tmp = mkdtempSync(join(tmpdir(), "login-import-routes-"));
 const dataDir = join(tmp, "data");
 const configDir = join(tmp, "magpie-config");
 const KEY = "sk-generic-abcdefghijklmnop";
+const THROW_KEY = "sk-throw-secret-value-1234";
 const ACCESS = "ya29.genericaccessabcdefghijklmn";
 const REFRESH = "1//genericrefreshabcdefghijklmn";
 const writes = [];
@@ -32,6 +34,7 @@ beforeAll(async () => {
     client: {
       auth: {
         async set(payload) {
+          if (payload?.body?.key === THROW_KEY) throw new Error(`magpie refused the body ${THROW_KEY}`);
           writes.push(payload);
           return { ok: true };
         },
@@ -65,11 +68,12 @@ test("an API key for any provider becomes an api entry", async () => {
   expect(body).toMatchObject({ ok: true, kind: "key", created: true });
   expect(writes).toHaveLength(1);
   expect(writes[0].path.id).toBe("codex");
+  const FINGERPRINT = createHash("sha256").update(KEY).digest("hex").slice(0, 8);
   expect(writes[0].body).toEqual({
     type: "api",
     key: KEY,
-    accountId: `API key …${KEY.slice(-4)}`,
-    uid: `key_${KEY.slice(-4)}`,
+    accountId: `API key …${FINGERPRINT}`,
+    uid: `key_${FINGERPRINT}`,
   });
   // The secret is written to magpie; it never comes back in the answer.
   expect(JSON.stringify(body)).not.toContain(KEY);
@@ -127,6 +131,15 @@ test("a provider id that is not a slug is refused before any write", async () =>
   expect(response.status).toBe(400);
   expect((await response.json()).error).toBe("invalid_provider");
   expect(writes).toHaveLength(0);
+});
+
+test("a host write error is reported without echoing its text", async () => {
+  writes.length = 0;
+  const response = await importCredential({ provider: "codex", text: THROW_KEY });
+  expect(response.status).toBe(502);
+  const payload = await response.json();
+  expect(payload.error).toBe("write_failed");
+  expect(JSON.stringify(payload)).not.toContain(THROW_KEY);
 });
 
 test("the route still requires the page token", async () => {
