@@ -14,7 +14,7 @@ Every account gets its own browser profile, its own pinned fingerprint and the p
 
 - **Every provider magpie knows, in one list.** msg reads the provider plugins you have installed *and* magpie's own provider list, then merges them with its local registry. Nothing is hidden behind a category you have to guess — the full roster is listed, with the sign-in routes each provider actually exposes.
 - **Pick the way you sign in.** When a provider offers several routes — a login page per site, a team plan, reusing the desktop app's session, pasting a token — you choose, and msg says what kind each route is before you start.
-- **Paste a WorkBuddy credential.** WorkBuddy keeps its four native methods, and msg adds a fifth: paste a credential JSON, a Cookie header, a curl command, a refresh token or an API key. The refresh token is spent once to prove the credential, then written straight into magpie. Dead credentials fail here instead of being stored.
+- **Paste a credential for any provider.** WorkBuddy keeps its four native methods, and msg adds a fifth: paste a credential JSON, a Cookie header, a curl command, a refresh token or an API key. Every other provider in the list gets the same entry: msg detects a key or token, keeps only the typed fields magpie stores, refuses duplicates, and never logs or forwards the secret. A WorkBuddy refresh token is spent once to prove it; for providers with no safe endpoint to call, msg says so instead of claiming a check it did not run.
 - **One proxy per account.** Choose the exit in the add-account dialog and the login browser really uses it.
 - **Test an exit before you trust it.** A real connection through the proxy reports the exit IP, its region and the latency. No direct-connection fallback: if it fails, you see why.
 - **Trust score per exit.** Read the Claude IP trust score that page publishes, opened through that very proxy, and keep the number next to the row.
@@ -42,12 +42,12 @@ The first time you sign in, msg downloads its own browser runtime — about **17
 3. **Providers** → pick a provider → choose its proxy → **Add account**.
 4. A separate browser window opens. Sign in there as usual; it finishes by itself and the account appears in magpie. Close the window to cancel instead.
 
-For WorkBuddy you can skip the browser: **Accounts** → **导入凭据**, paste the credential, press **校验并导入**.
+For WorkBuddy you can skip the browser: **Accounts** → **导入凭据**, paste the credential, press **校验并导入**. Any other provider card without a runnable sign-in method offers the same dialog, scoped to that provider; the kind is detected automatically.
 
 ## Good to know
 
 - **Each account is its own browser.** Profiles, fingerprints and cookies belong to one account and are never shared, so signing in twice never merges two identities.
-- **A provider needs a sign-in route.** Providers that only accept a pasted token or a key are listed with that reason instead of an Add account button.
+- **A provider needs a sign-in route.** When no installed plugin exposes a runnable method, the card still offers **Add account**, which opens the paste dialog for that provider. If magpie itself does not list the provider, the account is written but magpie has nothing to use it for yet, and the card says so.
 - **The plugin follows magpie.** It uses the provider plugins you already installed and magpie's provider list, so a provider you add to magpie shows up here too.
 - **Nothing is shared with anyone.** There is no telemetry and no account: the only network calls are the ones you start — the proxy test, the trust score page, the WorkBuddy token refresh and the provider's own sign-in page.
 

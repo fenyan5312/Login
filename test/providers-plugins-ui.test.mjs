@@ -45,6 +45,18 @@ test("the provider card renders the add entry for a browser method", () => {
   expect(providersArea).toContain('id="providers-list"');
 });
 
+test("a provider with no runnable method still gets an add entry", () => {
+  // The universal way in: every subscription card can add an account. A card
+  // with no plugin method opens the paste dialog scoped to its own provider id,
+  // and that dialog posts the provider it was opened for.
+  expect(app).toContain("providerIsSubscription(provider)");
+  expect(app).toContain("openProviderImport(provider)");
+  expect(app).toContain('"msg:import-credential"');
+  const imp = readFileSync(join(root, "ui", "import.js"), "utf8");
+  expect(imp).toContain('addEventListener("msg:import-credential"');
+  expect(imp).toContain("provider: activeProvider");
+});
+
 test("the page follows a scan that is still running instead of asking for a reload", () => {
   // Root cause 2: the first provider-sources read answers "scanning", so the
   // page must make its own bounded follow-up reads and re-render the cards

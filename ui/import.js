@@ -11,14 +11,14 @@ const messages = {
   en: {
     open: "Import credential",
     title: "Import a credential",
-    copy: "Paste a WorkBuddy credential. It is validated first, then written into magpie and shown in Accounts.",
+    copy: "Paste a credential for {name}. msg reads it locally, writes it into magpie, and the Accounts tab shows it.",
     label: "Credential",
-    hint: "JSON, a flat array, a Cookie or request headers, curl, a query string or an API key all work. Field names are read in camelCase and snake_case; timestamps may be seconds or milliseconds.",
+    hint: "An API key, an access token, JSON, a Cookie or request headers, or key=value pairs all work. The kind is detected automatically; field names are read in camelCase and snake_case.",
     kind: "Sign-in / API key",
-    note: "The credential is held in memory only: one refresh request, never written to disk, never sent anywhere else. A duplicate account is refused.",
+    note: "The credential is held in memory only: never written to disk, never sent to a third party. A duplicate is refused. Providers without a reachable endpoint are not claimed as validated.",
     cancel: "Cancel",
     submit: "Validate and import",
-    checking: "Validating… the refresh token is really spent once.",
+    checking: "Reading the credential…",
     writing: "Writing into magpie…",
     done: "Imported",
     empty: "The box is empty.",
@@ -27,14 +27,14 @@ const messages = {
   "zh-Hans": {
     open: "导入凭据",
     title: "导入凭据",
-    copy: "粘贴 WorkBuddy 凭据。校验通过后直接写入 magpie，并出现在账号列表里。",
+    copy: "粘贴 {name} 的凭据。msg 在本地解析后写入 magpie，账号列表里就能看到。",
     label: "凭据",
-    hint: "支持 JSON、扁平数组、Cookie / 请求头、curl、query 串和 API key。字段大小写与驼峰 / 下划线都认，时间戳秒和毫秒都认。",
+    hint: "支持 API key、access token、JSON、Cookie / 请求头、key=value。类型会自动识别，字段大小写与驼峰 / 下划线都认。",
     kind: "登录凭据 / API key",
-    note: "凭据只在内存里过一遍：只发一个刷新请求，不落盘、不外发。重复账号会被拒绝。",
+    note: "凭据只在内存里过一遍：不落盘、不外发。重复账号会被拒绝。无法联网校验的供应商不会假装校验过。",
     cancel: "取消",
     submit: "校验并导入",
-    checking: "校验中… 会真的拿 refresh token 换一次 token。",
+    checking: "正在读取凭据…",
     writing: "正在写入 magpie…",
     done: "已导入",
     empty: "框是空的。",
@@ -43,14 +43,14 @@ const messages = {
   "zh-Hant": {
     open: "匯入憑據",
     title: "匯入憑據",
-    copy: "貼上 WorkBuddy 憑據。驗證通過後直接寫入 magpie，並出現在帳號列表裡。",
+    copy: "貼上 {name} 的憑據。msg 在本機解析後寫入 magpie，帳號列表裡就能看到。",
     label: "憑據",
-    hint: "支援 JSON、扁平陣列、Cookie / 請求標頭、curl、query 字串與 API key。欄位大小寫與駝峰 / 底線都認，時間戳秒與毫秒都認。",
+    hint: "支援 API key、access token、JSON、Cookie / 請求標頭、key=value。類型會自動辨識，欄位大小寫與駝峰 / 底線都認。",
     kind: "登入憑據 / API key",
-    note: "憑據只在記憶體裡過一遍：只發一個刷新請求，不落盤、不外傳。重複帳號會被拒絕。",
+    note: "憑據只在記憶體裡過一遍：不落盤、不外傳。重複帳號會被拒絕。無法連線驗證的供應商不會假裝驗證過。",
     cancel: "取消",
     submit: "驗證並匯入",
-    checking: "驗證中… 會真的用 refresh token 換一次 token。",
+    checking: "正在讀取憑據…",
     writing: "正在寫入 magpie…",
     done: "已匯入",
     empty: "框是空的。",
@@ -59,14 +59,14 @@ const messages = {
   ja: {
     open: "認証情報をインポート",
     title: "認証情報をインポート",
-    copy: "WorkBuddy の認証情報を貼り付けます。検証してから magpie に書き込み、アカウント一覧に表示します。",
+    copy: "{name} の認証情報を貼り付けます。msg がローカルで読み取り、magpie に書き込むとアカウント一覧に表示されます。",
     label: "認証情報",
-    hint: "JSON、配列、Cookie / リクエストヘッダー、curl、クエリ文字列、API key に対応。camelCase と snake_case の両方、秒とミリ秒の両方を読みます。",
+    hint: "API key、access token、JSON、Cookie / リクエストヘッダー、key=value に対応。種類は自動判別し、camelCase と snake_case の両方を読みます。",
     kind: "ログイン / API key",
-    note: "認証情報はメモリ上だけで扱います。リフレッシュ要求は 1 回、ディスクにも外部にも残しません。重複アカウントは拒否されます。",
+    note: "認証情報はメモリ上だけで扱います。ディスクにも第三者にも残しません。重複アカウントは拒否されます。到達可能なエンドポイントがないプロバイダーを「検証済み」とは表示しません。",
     cancel: "キャンセル",
     submit: "検証してインポート",
-    checking: "検証中… refresh token を実際に 1 回使います。",
+    checking: "認証情報を読み取り中…",
     writing: "magpie に書き込み中…",
     done: "インポートしました",
     empty: "入力欄が空です。",
@@ -98,13 +98,15 @@ const errorNode = byId("import-error");
 const successNode = byId("import-success");
 let busy = false;
 let closeTimer = 0;
+let activeProvider = "workbuddy";
+let activeName = "WorkBuddy";
 
 function applyText() {
   document.documentElement.lang = lang;
   for (const [id, value] of [
     ["import-credential", text.open],
     ["import-title", text.title],
-    ["import-copy", text.copy],
+    ["import-copy", text.copy.replaceAll("{name}", activeName)],
     ["import-text-label", text.label],
     ["import-text-hint", text.hint],
     ["import-kind", text.kind],
@@ -116,8 +118,8 @@ function applyText() {
     if (node) node.textContent = value;
   }
   textarea.placeholder = messages[lang] === messages["zh-Hans"]
-    ? '{"account":{…},"auth":{"accessToken":"…","refreshToken":"…"}}\n或：access_token=…; refresh_token=…\n或：Cookie: access_token=…; refresh_token=…\n或：ck_…（WorkBuddy API key）'
-    : '{"account":{…},"auth":{"accessToken":"…","refreshToken":"…"}}\nor: access_token=…; refresh_token=…\nor: Cookie: access_token=…; refresh_token=…\nor: ck_… (WorkBuddy API key)';
+    ? `{"access_token":"…","refresh_token":"…"}\n或：access_token=…; refresh_token=…\n或：Cookie: access_token=…\n或：直接粘贴一整串 API key`
+    : `{"access_token":"…","refresh_token":"…"}\nor: access_token=…; refresh_token=…\nor: Cookie: access_token=…\nor: a bare API key`;
 }
 
 async function api(path, body) {
@@ -170,7 +172,11 @@ function clearError() {
   errorNode.textContent = "";
 }
 
-function openDialog() {
+function openDialog(detail = {}) {
+  const provider = typeof detail?.provider === "string" && detail.provider ? detail.provider : "workbuddy";
+  activeProvider = provider;
+  activeName = typeof detail?.name === "string" && detail.name ? detail.name : provider;
+  applyText();
   clearError();
   successNode.hidden = true;
   successNode.textContent = "";
@@ -203,10 +209,10 @@ async function run() {
   showStatus(text.checking);
 
   try {
-    // The call covers parse → duplicate check → one real refresh → write. The
-    // status line changes once the service has answered, because there is no
-    // mid-flight event to subscribe to.
-    const result = await api("/api/import", { provider: "workbuddy", text: value });
+    // The call covers parse → duplicate check → (WorkBuddy: one real refresh) →
+    // write. Other providers are parsed and whitelisted locally; no endpoint is
+    // called in their name. The status line changes once the service answers.
+    const result = await api("/api/import", { provider: activeProvider, text: value });
     showStatus(text.writing);
     hideStatus();
     successNode.hidden = false;
@@ -227,7 +233,13 @@ async function run() {
   }
 }
 
-byId("import-credential")?.addEventListener("click", openDialog);
+byId("import-credential")?.addEventListener("click", () => openDialog());
+// A provider card without a runnable plugin method asks for the same dialog,
+// scoped to its own provider id. It carries only the id and the display name.
+window.addEventListener("msg:import-credential", (event) => {
+  const detail = event?.detail;
+  openDialog({ provider: detail?.provider, name: detail?.name });
+});
 byId("import-close")?.addEventListener("click", closeDialog);
 byId("import-cancel")?.addEventListener("click", closeDialog);
 submit?.addEventListener("click", run);

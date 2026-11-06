@@ -20,6 +20,7 @@ import {
   methodCategoryText,
   partitionProviders,
   providerCanSignIn,
+  providerIsSubscription,
   providerStatusView,
   shouldPollPluginScan,
 } from "./provider-state.js";
@@ -2473,6 +2474,17 @@ function providerCard(provider) {
     add.textContent = text.addAccount;
     add.addEventListener("click", () => openSignInDialog(provider));
     actions.append(add);
+  } else if (providerIsSubscription(provider)) {
+    // No installed plugin exposes a runnable method, but the provider can still
+    // hold a credential. Offer the universal paste import: it parses a key,
+    // token or JSON locally and writes only the typed fields magpie stores.
+    const add = document.createElement("button");
+    add.type = "button";
+    add.className = "button primary provider-add";
+    add.dataset.providerId = provider.id;
+    add.textContent = text.addAccount;
+    add.addEventListener("click", () => openProviderImport(provider));
+    actions.append(add);
   }
   // Reporting is offered on every card, including the ones that offer no way in
   // at all: a card with nothing to click is exactly the one worth reporting.
@@ -3009,6 +3021,17 @@ function selectedSignInAccount() {
   if (!field || field.hidden) return null;
   const value = byId("signin-account").value;
   return typeof value === "string" && value ? value : null;
+}
+
+// The universal way in: the import dialog parses a key, token or JSON and
+// writes it for this provider. It is dispatch-based because import.js owns that
+// dialog, and both files are separate modules loaded by the page.
+function openProviderImport(provider) {
+  window.dispatchEvent(
+    new CustomEvent("msg:import-credential", {
+      detail: { provider: provider.id, name: provider.name || provider.id },
+    }),
+  );
 }
 
 function openSignInDialog(provider, options = {}) {
